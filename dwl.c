@@ -230,7 +230,6 @@ static void arrangelayer(Monitor *m, struct wl_list *list,
 static void arrangelayers(Monitor *m);
 static void axisnotify(struct wl_listener *listener, void *data);
 static void buttonpress(struct wl_listener *listener, void *data);
-static void chvt(const Arg *arg);
 static void checkidleinhibitor(struct wlr_surface *exclude);
 static void cleanup(void);
 static void cleanupkeyboard(struct wl_listener *listener, void *data);
@@ -261,7 +260,6 @@ static void focusmon(const Arg *arg);
 static void focusstack(const Arg *arg);
 static Client *focustop(Monitor *m);
 static void fullscreennotify(struct wl_listener *listener, void *data);
-static void incnmaster(const Arg *arg);
 static void inputdevice(struct wl_listener *listener, void *data);
 static int keybinding(uint32_t mods, xkb_keysym_t sym);
 static void keypress(struct wl_listener *listener, void *data);
@@ -305,8 +303,6 @@ static void tagmon(const Arg *arg);
 static void tile(Monitor *m);
 static void togglefloating(const Arg *arg);
 static void togglefullscreen(const Arg *arg);
-static void toggletag(const Arg *arg);
-static void toggleview(const Arg *arg);
 static void unlocksession(struct wl_listener *listener, void *data);
 static void unmaplayersurfacenotify(struct wl_listener *listener, void *data);
 static void unmapnotify(struct wl_listener *listener, void *data);
@@ -622,12 +618,6 @@ buttonpress(struct wl_listener *listener, void *data)
 	 * pointer focus that a button press has occurred */
 	wlr_seat_pointer_notify_button(seat,
 			event->time_msec, event->button, event->state);
-}
-
-void
-chvt(const Arg *arg)
-{
-	wlr_session_change_vt(wlr_backend_get_session(backend), arg->ui);
 }
 
 void
@@ -1333,15 +1323,6 @@ fullscreennotify(struct wl_listener *listener, void *data)
 {
 	Client *c = wl_container_of(listener, c, fullscreen);
 	setfullscreen(c, client_wants_fullscreen(c));
-}
-
-void
-incnmaster(const Arg *arg)
-{
-	if (!arg || !selmon)
-		return;
-	selmon->nmaster = MAX(selmon->nmaster + arg->i, 0);
-	arrange(selmon);
 }
 
 void

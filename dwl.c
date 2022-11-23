@@ -130,6 +130,7 @@ typedef struct {
 
 typedef struct {
 	uint32_t mod;
+	xkb_keysym_t chain;
 	xkb_keysym_t keysym;
 	void (*func)(const Arg *);
 	const Arg arg;
@@ -325,6 +326,7 @@ static const char *cursor_image = "left_ptr";
 static pid_t child_pid = -1;
 static int locked;
 static void *exclusive_focus;
+static xkb_keysym_t chainkey = -1;
 static struct wl_display *dpy;
 static struct wlr_backend *backend;
 static struct wlr_scene *scene;
@@ -1376,13 +1378,45 @@ keybinding(uint32_t mods, xkb_keysym_t sym)
 	 * processing.
 	 */
 	int handled = 0;
+	int current = 0;
 	const Key *k;
+
 	for (k = keys; k < END(keys); k++) {
-		if (CLEANMASK(mods) == CLEANMASK(k->mod) &&
-				sym == k->keysym && k->func) {
+		if (
+				CLEANMASK(mods) == CLEANMASK(k->mod) &&
+				sym == k->keysym &&
+				chainkey == -1 &&
+				k->chain == -1 &&
+				k->func
+		   ) {
 			k->func(&k->arg);
 			handled = 1;
 		}
+		else if (
+				!current &&
+				sym == k->keysym &&
+				chainkey != -1 &&
+				k->chain == chainkey &&
+				k->func
+			) {
+			k->func(&k->arg);
+			chainkey = -1;
+			handled = 1;
+		}
+		else if (
+				CLEANMASK(mods) == CLEANMASK(k->mod) &&
+				k->chain == sym &&
+				chainkey == -1 &&
+				k->func
+			) {
+			current = 1;
+			chainkey = sym;
+			handled = 1;
+		}
+	}
+
+	if (!current) {
+		chainkey = -1;
 	}
 	return handled;
 }

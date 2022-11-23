@@ -1,0 +1,57 @@
+#!/usr/bin/perl
+
+use Modern::Perl;
+
+my $titlefile = "$ENV{XDG_RUNTIME_DIR}/dwl-title";
+my $appidfile = "$ENV{XDG_RUNTIME_DIR}/dwl-appid";
+
+my $titles = {};
+my $appids = {};
+my $lasttitle = '';
+my $lastappid = '';
+
+sub writetext {
+	my ($outputfile, $text) = @_;
+
+	open my $out, ">", "$outputfile" or die "failed to open file: '$outputfile' $!";
+	print $out "$text\n";
+	close $out;
+}
+
+sub initfile {
+	my ($file) = @_;
+	writetext($file, '');
+	chmod(0600, $file);
+}
+
+initfile($titlefile);
+initfile($appidfile);
+
+while (<>) {
+	chomp;
+	my ($monitor, $key, $value) = (/^\s*(\S+)\s*(\S+)\s*(.*)$/);
+
+	for ($key) {
+		/title/ && do {
+			$titles->{$monitor} = $value;
+			last;
+		};
+		/appid/ && do {
+			$appids->{$monitor} = $value;
+			last;
+		};
+		/selmon/ && do {
+			if ($value eq '1') {
+				if (exists($titles->{$monitor}) and $lasttitle ne $titles->{$monitor}) {
+					writetext($titlefile, $titles->{$monitor});
+					$lasttitle = $titles->{$monitor};
+				}
+				if (exists($appids->{$monitor}) and $lastappid ne $appids->{$monitor}) {
+					writetext($appidfile, $appids->{$monitor});
+					$lastappid = $appids->{$monitor};
+				}
+			}
+			last;
+		};
+	}
+}

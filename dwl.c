@@ -236,6 +236,7 @@ static void cleanup(void);
 static void cleanupkeyboard(struct wl_listener *listener, void *data);
 static void cleanupmon(struct wl_listener *listener, void *data);
 static void closemon(Monitor *m);
+static void col(Monitor *m);
 static void commitlayersurfacenotify(struct wl_listener *listener, void *data);
 static void commitnotify(struct wl_listener *listener, void *data);
 static void createdecoration(struct wl_listener *listener, void *data);
@@ -2401,6 +2402,28 @@ tagmon(const Arg *arg)
 	Client *sel = focustop(selmon);
 	if (sel)
 		setmon(sel, dirtomon(arg->i), 0);
+}
+
+void
+col(Monitor *m)
+{
+	Client *c;
+	unsigned int n = 0, i = 0;
+
+	wl_list_for_each(c, &clients, link)
+		if (VISIBLEON(c, m) && !c->isfloating && !c->isfullscreen)
+			n++;
+
+	wl_list_for_each(c, &clients, link) {
+		if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
+			continue;
+		resize(c, (struct wlr_box){
+				.x = m->w.x + i * m->w.width / n,
+				.y = m->w.y,
+				.width = m->w.width / n,
+				.height = m->w.height}, 0);
+		i++;
+	}
 }
 
 void

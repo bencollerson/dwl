@@ -29,9 +29,10 @@ static const Rule rules[] = {
 /* layout(s) */
 static const Layout layouts[] = {
 	/* symbol     arrange function */
-	{ "[]=",      tile },
-	{ "><>",      NULL },    /* no layout function means floating behavior */
-	{ "[M]",      monocle },
+	{ "||",      col },
+	{ "|-",      tile },
+	{ "[]",      NULL },    /* no layout function means floating behavior */
+	{ "mo",      monocle },
 };
 
 /* monitors */
@@ -93,7 +94,7 @@ static const enum libinput_config_accel_profile accel_profile = LIBINPUT_CONFIG_
 static const double accel_speed = 0.0;
 
 enum layout_types {
-/*	LAYOUT_COLUMN,*/
+	LAYOUT_COLUMN,
 	LAYOUT_TILE,
 	LAYOUT_FLOAT,
 	LAYOUT_MONOCLE,
@@ -147,6 +148,7 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT, -1,    XKB_KEY_Q,          quit,             {0} },
 
 	/* layouts */
+	{ MODKEY,                    XKB_KEY_t,    XKB_KEY_c,          setlayout,      {.v = &layouts[LAYOUT_COLUMN]} },
 	{ MODKEY,                    XKB_KEY_t,    XKB_KEY_t,          setlayout,      {.v = &layouts[LAYOUT_TILE]} },
 	{ MODKEY,                    XKB_KEY_t,    XKB_KEY_f,          setlayout,      {.v = &layouts[LAYOUT_FLOAT]} },
 	{ MODKEY,                    XKB_KEY_t,    XKB_KEY_m,          setlayout,      {.v = &layouts[LAYOUT_MONOCLE]} },

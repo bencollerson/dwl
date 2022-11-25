@@ -2557,6 +2557,28 @@ col(Monitor *m)
 }
 
 void
+col(Monitor *m)
+{
+	Client *c;
+	unsigned int n = 0, i = 0;
+
+	wl_list_for_each(c, &clients, link)
+		if (VISIBLEON(c, m) && !c->isfloating && !c->isfullscreen)
+			n++;
+
+	wl_list_for_each(c, &clients, link) {
+		if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
+			continue;
+		resize(c, (struct wlr_box){
+				.x = m->w.x + i * m->w.width / n,
+				.y = m->w.y,
+				.width = m->w.width / n,
+				.height = m->w.height}, 0);
+		i++;
+	}
+}
+
+void
 tile(Monitor *m)
 {
 	unsigned int i, n = 0, mw, my, ty, draw_borders = 1;

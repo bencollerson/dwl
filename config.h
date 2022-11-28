@@ -1,4 +1,4 @@
-
+#include <X11/XF86keysym.h>
 #define TERMINAL "st"
 #define BROWSER "qutebrowser"
 
@@ -166,24 +166,22 @@ static const Key keys[] = {
 	{ MODKEY,           -1,   XKB_KEY_u,                     spawn,          SPAWN("bookmarker", "put") },
 	{ MODKEY,           -1,   XKB_KEY_v,                     spawn,          SPAWN("clipboard-control") },
 	{ MODKEY,           -1,   XKB_KEY_p,                     spawn,          SPAWN("media-command", "playpause") },
-	/*
 	{ 0,                -1,   XF86XK_AudioPlay,         spawn,          SPAWN("media-command", "playpause") },
-	{ MODKEY,           -1,   XK_bracketleft,           spawn,          SPAWN("media-command", "prev") },
+	{ MODKEY,           -1,   XKB_KEY_bracketleft,           spawn,          SPAWN("media-command", "prev") },
 	{ 0,                -1,   XF86XK_AudioPrev,         spawn,          SPAWN("media-command", "prev") },
-	{ MODKEY,           -1,   XK_bracketright,          spawn,          SPAWN("media-command", "next") },
+	{ MODKEY,           -1,   XKB_KEY_bracketright,          spawn,          SPAWN("media-command", "next") },
 	{ 0,                -1,   XF86XK_AudioNext,         spawn,          SPAWN("media-command", "next") },
-	{ Mod1Mask,         -1,   XK_comma,                 spawn,          SPAWN("change-volume", "down") },
-	{ MODKEY,           -1,   XK_comma,                 spawn,          SPAWN("change-volume", "down") },
+	{ WLR_MODIFIER_ALT, -1,   XKB_KEY_comma,                 spawn,          SPAWN("change-volume", "down") },
+	{ MODKEY,           -1,   XKB_KEY_comma,                 spawn,          SPAWN("change-volume", "down") },
 	{ 0,                -1,   XF86XK_AudioLowerVolume,  spawn,          SPAWN("change-volume", "down") },
-	{ Mod1Mask,         -1,   XK_period,                spawn,          SPAWN("change-volume", "up") },
-	{ MODKEY,           -1,   XK_period,                spawn,          SPAWN("change-volume", "up") },
+	{ WLR_MODIFIER_ALT, -1,   XKB_KEY_period,                spawn,          SPAWN("change-volume", "up") },
+	{ MODKEY,           -1,   XKB_KEY_period,                spawn,          SPAWN("change-volume", "up") },
 	{ 0,                -1,   XF86XK_AudioRaiseVolume,  spawn,          SPAWN("change-volume", "up") },
-	{ Mod1Mask,         -1,   XK_slash,                 spawn,          SPAWN("change-volume", "toggle") },
-	{ MODKEY,           -1,   XK_slash,                 spawn,          SPAWN("change-volume", "toggle") },
+	{ WLR_MODIFIER_ALT, -1,   XKB_KEY_slash,                 spawn,          SPAWN("change-volume", "toggle") },
+	{ MODKEY,           -1,   XKB_KEY_slash,                 spawn,          SPAWN("change-volume", "toggle") },
 	{ 0,                -1,   XF86XK_AudioMute,         spawn,          SPAWN("change-volume", "toggle") },
 	{ 0,                -1,   XF86XK_MonBrightnessUp,   spawn,          SPAWN("brighten", "up") },
 	{ 0,                -1,   XF86XK_MonBrightnessDown, spawn,          SPAWN("brighten", "down") },
-	*/
 
 	/* defines */
 	TAGKEYS(XKB_KEY_a),

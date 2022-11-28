@@ -2399,9 +2399,14 @@ tag(const Arg *arg)
 void
 tagmon(const Arg *arg)
 {
+	Monitor *m;
 	Client *sel = focustop(selmon);
-	if (sel)
+	if (sel) {
 		setmon(sel, dirtomon(arg->i), 0);
+		wl_list_for_each(m, &mons, link) {
+			arrange(m);
+		}
+	}
 }
 
 void

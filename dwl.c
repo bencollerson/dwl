@@ -314,6 +314,7 @@ static void updatetitle(struct wl_listener *listener, void *data);
 static void urgent(struct wl_listener *listener, void *data);
 static void view(const Arg *arg);
 static void virtualkeyboard(struct wl_listener *listener, void *data);
+static void warpcursor(const Client *c);
 static Monitor *xytomon(double x, double y);
 static struct wlr_scene_node *xytonode(double x, double y, struct wlr_surface **psurface,
 		Client **pc, LayerSurface **pl, double *nx, double *ny);
@@ -487,6 +488,8 @@ arrange(Monitor *m)
 		m->lt[m->sellt]->arrange(m);
 	motionnotify(0);
 	checkidleinhibitor(NULL);
+	c = selclient();
+	warpcursor(c);
 }
 
 void
@@ -1221,6 +1224,8 @@ focusclient(Client *c, int lift)
 
 	if (locked)
 		return;
+	/* Warp cursor to center of client if it is outside */
+	warpcursor(c);
 
 	/* Raise client in stacking order if requested */
 	if (c && lift)
@@ -1323,6 +1328,7 @@ focusstack(const Arg *arg)
 	}
 	/* If only one client is visible on selmon, then c == sel */
 	focusclient(c, 1);
+	warpcursor(selclient());
 }
 
 /* We probably should change the name of this, it sounds like
@@ -2724,6 +2730,24 @@ virtualkeyboard(struct wl_listener *listener, void *data)
 {
 	struct wlr_virtual_keyboard_v1 *keyboard = data;
 	createkeyboard(&keyboard->keyboard);
+}
+
+void
+warpcursor(const Client *c) {
+	if (!c && selmon) {
+		wlr_cursor_warp_closest(cursor,
+			  NULL,
+			  selmon->w.x + selmon->w.width / 2.0,
+			  selmon->w.y + selmon->w.height / 2.0);
+	}
+	else if ( c && (cursor->x < c->geom.x ||
+		cursor->x > c->geom.x + c->geom.width ||
+		cursor->y < c->geom.y ||
+		cursor->y > c->geom.y + c->geom.height))
+		wlr_cursor_warp_closest(cursor,
+			  NULL,
+			  c->geom.x + c->geom.width / 2.0,
+			  c->geom.y + c->geom.height / 2.0);
 }
 
 Monitor *

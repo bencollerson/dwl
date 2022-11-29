@@ -19,11 +19,12 @@ static const char *tags[] = {
 };
 
 static const Rule rules[] = {
-	/* app_id     title       tags mask     isfloating   monitor */
+	/* app_id     title        tags mask     isfloating   monitor scratchkey */
 	/* examples:
-	{ "Gimp",     NULL,       0,            1,           -1 },
+	{ "Gimp",     NULL,        0,            1,           -1,     O   },
+	{ "firefox",  NULL,        1 << 8,       0,           -1,     0   },
 	*/
-	{ "firefox",  NULL,       1 << 8,       0,           -1 },
+	{ NULL,       "KeePassXC", 0,            1,           -1,     's' },
 };
 
 /* layout(s) */
@@ -111,21 +112,9 @@ enum layout_types {
 
 /* commands */
 static const char *termcmd[] = { "foot", NULL };
-static const char *menucmd[] = { "bemenu-run",
-	"--bottom",
-	"--ignorecase",
-	"--prompt", "$",
-	"-M", "10",
-	"--fn", "Menlo 10",
-	"--nf", "#BBBBBB"
-	"--nb", "#222222",
-	"--hf", "#BBBBBB",
-	"--hb", "#223344",
-	"--tf", "#BBBBBB",
-	"--tb", "#223344",
-	"--sf", "#223344",
-	"--sb", "#BBBBBB",
-	NULL };
+static const char *menucmd[] = { "bemenu-run", "--ignorecase", "--prompt", "$", NULL };
+
+static const char *scratchpadcmd[] = { "s", "keepassxc", NULL };
 
 static const Key keys[] = {
 	/* Note that Shift changes certain key codes: c -> C, 2 -> at, etc. */
@@ -146,6 +135,7 @@ static const Key keys[] = {
 	{ MODKEY,                    -1,    XKB_KEY_f,          togglefullscreen, {0} },
 	{ MODKEY,                    -1,    XKB_KEY_m,               focusmon,         {.i = +1 } },
 	{ MODKEY,                    -1,    XKB_KEY_n,               tagmon,           {.i = +1 } },
+	{ MODKEY,                    -1,    XKB_KEY_o,               togglescratch,           {.v = scratchpadcmd } },
 	{ MODKEY|WLR_MODIFIER_SHIFT, -1,    XKB_KEY_Q,          quit,             {0} },
 
 	/* layouts */

@@ -1696,6 +1696,36 @@ movestack(const Arg *arg)
 }
 
 void
+movestack(const Arg *arg)
+{
+	Client *c, *sel = selclient();
+
+	if (wl_list_length(&clients) <= 1) {
+		return;
+	}
+
+	if (arg->i > 0) {
+		wl_list_for_each(c, &sel->link, link) {
+			if (VISIBLEON(c, selmon) || &c->link == &clients) {
+				break; /* found it */
+			}
+		}
+	} else {
+		wl_list_for_each_reverse(c, &sel->link, link) {
+			if (VISIBLEON(c, selmon) || &c->link == &clients) {
+				break; /* found it */
+			}
+		}
+		/* backup one client */
+		c = wl_container_of(c->link.prev, c, link);
+	}
+
+	wl_list_remove(&sel->link);
+	wl_list_insert(&c->link, &sel->link);
+	arrange(selmon);
+}
+
+void
 motionabsolute(struct wl_listener *listener, void *data)
 {
 	/* This event is forwarded by the cursor when a pointer emits an _absolute_

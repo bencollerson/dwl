@@ -155,7 +155,6 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_t,    XKB_KEY_m,        setlayout,        {.v = &layouts[LAYOUT_MONOCLE]} },
 
 	/* shortcuts */
-<<<<<<< HEAD
 	{ MODKEY,                    -1,   XKB_KEY_z,                spawn,            SPAWN("wllock", "-f") },
 	{ MODKEY|WLR_MODIFIER_SHIFT, -1,   XKB_KEY_Z,                spawn,            SPAWN("wllock", "-s") },
 	{ MODKEY,                    -1,   XKB_KEY_w,                spawn,            SPAWN(BROWSER) },
@@ -182,35 +181,6 @@ static const Key keys[] = {
 	{ 0,                         -1,   XF86XK_AudioMute,         spawn,            SPAWN("change-volume", "toggle") },
 	{ 0,                         -1,   XF86XK_MonBrightnessUp,   spawn,            SPAWN("brighten", "up") },
 	{ 0,                         -1,   XF86XK_MonBrightnessDown, spawn,            SPAWN("brighten", "down") },
-=======
-	{ MODKEY,           -1,   XKB_KEY_z,                     spawn,          SPAWN("lock-screen") },
-	{ MODKEY|WLR_MODIFIER_SHIFT, -1,   XKB_KEY_Z,                     spawn,          SPAWN("suspend-lock") },
-	{ MODKEY,           -1,   XKB_KEY_s,                     spawn,          SPAWN("fix-stuff") },
-	{ MODKEY,           -1,   XKB_KEY_w,                     spawn,          SPAWN(BROWSER) },
-	{ MODKEY|WLR_MODIFIER_SHIFT, -1,   XKB_KEY_W,                     spawn,          SPAWN(TERMINAL, "-e", "nmtui") },
-	{ MODKEY,           -1,   XKB_KEY_g,                     spawn,          SPAWN("ss", "-s") },
-	{ MODKEY|WLR_MODIFIER_SHIFT, -1,   XKB_KEY_G,                     spawn,          SPAWN("ss") },
-	{ MODKEY,           -1,   XKB_KEY_y,                     spawn,          SPAWN("bookmarker", "yank") },
-	{ MODKEY,           -1,   XKB_KEY_u,                     spawn,          SPAWN("bookmarker", "put") },
-	{ MODKEY,           -1,   XKB_KEY_v,                     spawn,          SPAWN("clipboard-control") },
-	{ MODKEY,           -1,   XKB_KEY_p,                     spawn,          SPAWN("media-command", "playpause") },
-	{ 0,                -1,   XF86XK_AudioPlay,         spawn,          SPAWN("media-command", "playpause") },
-	{ MODKEY,           -1,   XKB_KEY_bracketleft,           spawn,          SPAWN("media-command", "prev") },
-	{ 0,                -1,   XF86XK_AudioPrev,         spawn,          SPAWN("media-command", "prev") },
-	{ MODKEY,           -1,   XKB_KEY_bracketright,          spawn,          SPAWN("media-command", "next") },
-	{ 0,                -1,   XF86XK_AudioNext,         spawn,          SPAWN("media-command", "next") },
-	{ WLR_MODIFIER_ALT, -1,   XKB_KEY_comma,                 spawn,          SPAWN("change-volume", "down") },
-	{ MODKEY,           -1,   XKB_KEY_comma,                 spawn,          SPAWN("change-volume", "down") },
-	{ 0,                -1,   XF86XK_AudioLowerVolume,  spawn,          SPAWN("change-volume", "down") },
-	{ WLR_MODIFIER_ALT, -1,   XKB_KEY_period,                spawn,          SPAWN("change-volume", "up") },
-	{ MODKEY,           -1,   XKB_KEY_period,                spawn,          SPAWN("change-volume", "up") },
-	{ 0,                -1,   XF86XK_AudioRaiseVolume,  spawn,          SPAWN("change-volume", "up") },
-	{ WLR_MODIFIER_ALT, -1,   XKB_KEY_slash,                 spawn,          SPAWN("change-volume", "toggle") },
-	{ MODKEY,           -1,   XKB_KEY_slash,                 spawn,          SPAWN("change-volume", "toggle") },
-	{ 0,                -1,   XF86XK_AudioMute,         spawn,          SPAWN("change-volume", "toggle") },
-	{ 0,                -1,   XF86XK_MonBrightnessUp,   spawn,          SPAWN("brighten", "up") },
-	{ 0,                -1,   XF86XK_MonBrightnessDown, spawn,          SPAWN("brighten", "down") },
->>>>>>> 72d80f6 (media keys)
 
 	/* defines */
 	TAGKEYS(XKB_KEY_a), TAGKEYS(XKB_KEY_b),

@@ -155,7 +155,7 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT, -1,   XKB_KEY_G,                spawn,            SPAWN("ss") },
 	{ MODKEY,                    -1,   XKB_KEY_y,                spawn,            SPAWN("bookmarker", "yank") },
 	{ MODKEY,                    -1,   XKB_KEY_u,                spawn,            SPAWN("bookmarker", "put") },
-	{ MODKEY,                    -1,   XKB_KEY_v,                spawn,            SPAWN("clipboard-control") },
+	{ MODKEY,                    -1,   XKB_KEY_v,                spawn,            SPAWN("clipman", "pick", "--tool", "bemenu") },
 	{ MODKEY,                    -1,   XKB_KEY_p,                spawn,            SPAWN("media-command", "playpause") },
 	{ 0,                         -1,   XF86XK_AudioPlay,         spawn,            SPAWN("media-command", "playpause") },
 	{ MODKEY,                    -1,   XKB_KEY_bracketleft,      spawn,            SPAWN("media-command", "prev") },

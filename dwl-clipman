@@ -1,0 +1,3 @@
+#!/bin/sh
+grep -q ' - KeePassXC$' "$XDG_RUNTIME_DIR/dwl-windowtitle" ||
+	clipman store --no-persist

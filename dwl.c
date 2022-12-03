@@ -64,7 +64,7 @@
 #define MAX(A, B)               ((A) > (B) ? (A) : (B))
 #define MIN(A, B)               ((A) < (B) ? (A) : (B))
 #define CLEANMASK(mask)         (mask & ~WLR_MODIFIER_CAPS)
-#define VISIBLEON(C, M)         ((M) && ((C)->tags & (M)->tagset[(M)->seltags]))
+#define VISIBLEON(C, M)         ((M) && (C)->mon == (M) && ((C)->tags & (M)->tagset[(M)->seltags]))
 #define LENGTH(X)               (sizeof X / sizeof X[0])
 #define END(A)                  ((A) + LENGTH(A))
 #define TAGMASK                 ((1 << LENGTH(tags)) - 1)
@@ -1902,8 +1902,6 @@ printstatus(void)
 	wl_list_for_each(m, &mons, link) {
 		occ = urg = 0;
 		wl_list_for_each(c, &clients, link) {
-			if (c->mon != m)
-				continue;
 			occ |= c->tags;
 			if (c->isurgent)
 				urg |= c->tags;
@@ -2736,7 +2734,7 @@ attachclients(Monitor *m)
 void
 view(const Arg *arg)
 {
-	Monitor *m;
+	Monitor *m, *origm = selmon;
 	unsigned int newtagset = selmon->tagset[selmon->seltags ^ 1];
 
 	if (!selmon || (arg->ui & TAGMASK) == selmon->tagset[selmon->seltags])
@@ -2760,12 +2758,12 @@ view(const Arg *arg)
 		}
 	}
 
-	selmon->seltags ^= 1; /* toggle sel tagset */
+	origm->seltags ^= 1; /* toggle sel tagset */
 	if (arg->ui & TAGMASK)
-		selmon->tagset[selmon->seltags] = arg->ui & TAGMASK;
-	attachclients(selmon);
-	focusclient(focustop(selmon), 1);
-	arrange(selmon);
+		origm->tagset[origm->seltags] = arg->ui & TAGMASK;
+	attachclients(origm);
+	focusclient(focustop(origm), 1);
+	arrange(origm);
 	printstatus();
 }
 

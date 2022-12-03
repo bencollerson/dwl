@@ -20,12 +20,12 @@ static const char *tags[] = {
 };
 
 static const Rule rules[] = {
-	/* app_id     title        tags mask     isfloating   monitor scratchkey */
+	/* app_id     title       tags mask  iscentered  isfloating  monitor scratchkey*/
 	/* examples:
-	{ "Gimp",     NULL,        0,            1,           -1,     O   },
-	{ "firefox",  NULL,        1 << 8,       0,           -1,     0   },
+	{ "Gimp",     NULL,        0,        0,          0,          -1,     O   },
+	{ "firefox",  NULL,        1 << 8,   0,          0,          -1,     0   },
 	*/
-	{ NULL,       "KeePassXC", 0,            1,           -1,     's' },
+	{ NULL,       "KeePassXC", 0,        1,          0,          -1,     'k' },
 };
 
 /* layout(s) */
@@ -116,7 +116,7 @@ enum layout_types {
 static const char *termcmd[] = { "foot", NULL };
 static const char *menucmd[] = { "bemenu-run", "--ignorecase", "--prompt", "$", NULL };
 
-static const char *scratchpadcmd[] = { "s", "keepassxc", NULL };
+static const char *scratchpadcmd[] = { "k", "keepassxc", NULL };
 
 static const Key keys[] = {
 	/* Note that Shift changes certain key codes: c -> C, 2 -> at, etc. */

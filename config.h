@@ -25,7 +25,7 @@ static const Rule rules[] = {
 	{ "Gimp",     NULL,        0,        0,          0,          -1,     O   },
 	{ "firefox",  NULL,        1 << 8,   0,          0,          -1,     0   },
 	*/
-	{ NULL,       "KeePassXC", 0,        1,          0,          -1,     'k' },
+	{ NULL,       "KeePassXC", 0,        1,          1,          -1,     'k' },
 };
 
 /* layout(s) */

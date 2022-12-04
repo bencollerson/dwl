@@ -1401,6 +1401,16 @@ inputdevice(struct wl_listener *listener, void *data)
 	struct wlr_input_device *device = data;
 	uint32_t caps;
 
+	if (strcmp(device->name, "Elan Touchpad") == 0) {
+		return;
+	}
+	/*
+	FILE *fp;
+	fp = fopen("/home/benc/dwl.log", "a");
+	fprintf(fp, "%s\n", device->name);
+	fclose(fp);
+	*/
+
 	switch (device->type) {
 	case WLR_INPUT_DEVICE_KEYBOARD:
 		createkeyboard(wlr_keyboard_from_input_device(device));

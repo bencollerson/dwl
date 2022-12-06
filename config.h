@@ -110,6 +110,8 @@ enum layout_types {
 	{ MODKEY,                    XKB_KEY_r, KEY,           view,            {.ui = 1 << (KEY - XKB_KEY_a)} }, \
 	{ MODKEY,                    XKB_KEY_e, KEY,           tag,             {.ui = 1 << (KEY - XKB_KEY_a)} }
 
+#define CHVT(n) { WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT, -1, XKB_KEY_XF86Switch_VT_##n, chvt, {.ui = (n)} }
+
 #define SPAWN(...) {.v = (const char*[]){ __VA_ARGS__, NULL } }
 
 /* commands */
@@ -176,33 +178,22 @@ static const Key keys[] = {
 	{ 0,                         -1,   XF86XK_MonBrightnessDown, spawn,            SPAWN("brighten", "down") },
 
 	/* defines */
-	TAGKEYS(XKB_KEY_a),
-	TAGKEYS(XKB_KEY_b),
-	TAGKEYS(XKB_KEY_c),
-	TAGKEYS(XKB_KEY_d),
-	TAGKEYS(XKB_KEY_e),
-	TAGKEYS(XKB_KEY_f),
-	TAGKEYS(XKB_KEY_g),
-	TAGKEYS(XKB_KEY_h),
-	TAGKEYS(XKB_KEY_i),
-	TAGKEYS(XKB_KEY_j),
-	TAGKEYS(XKB_KEY_k),
-	TAGKEYS(XKB_KEY_l),
-	TAGKEYS(XKB_KEY_m),
-	TAGKEYS(XKB_KEY_n),
-	TAGKEYS(XKB_KEY_o),
-	TAGKEYS(XKB_KEY_p),
-	TAGKEYS(XKB_KEY_q),
-	TAGKEYS(XKB_KEY_r),
-	TAGKEYS(XKB_KEY_s),
-	TAGKEYS(XKB_KEY_t),
-	TAGKEYS(XKB_KEY_u),
-	TAGKEYS(XKB_KEY_v),
-	TAGKEYS(XKB_KEY_w),
-	TAGKEYS(XKB_KEY_x),
-	TAGKEYS(XKB_KEY_y),
-	TAGKEYS(XKB_KEY_z),
+	TAGKEYS(XKB_KEY_a), TAGKEYS(XKB_KEY_b),
+	TAGKEYS(XKB_KEY_c), TAGKEYS(XKB_KEY_d),
+	TAGKEYS(XKB_KEY_e), TAGKEYS(XKB_KEY_f),
+	TAGKEYS(XKB_KEY_g), TAGKEYS(XKB_KEY_h),
+	TAGKEYS(XKB_KEY_i), TAGKEYS(XKB_KEY_j),
+	TAGKEYS(XKB_KEY_k), TAGKEYS(XKB_KEY_l),
+	TAGKEYS(XKB_KEY_m), TAGKEYS(XKB_KEY_n),
+	TAGKEYS(XKB_KEY_o), TAGKEYS(XKB_KEY_p),
+	TAGKEYS(XKB_KEY_q), TAGKEYS(XKB_KEY_r),
+	TAGKEYS(XKB_KEY_s), TAGKEYS(XKB_KEY_t),
+	TAGKEYS(XKB_KEY_u), TAGKEYS(XKB_KEY_v),
+	TAGKEYS(XKB_KEY_w), TAGKEYS(XKB_KEY_x),
+	TAGKEYS(XKB_KEY_y), TAGKEYS(XKB_KEY_z),
 
+	/* virtual terminals */
+	CHVT(1), CHVT(2), CHVT(3), CHVT(4), CHVT(5), CHVT(6),
 };
 
 static const Button buttons[] = {

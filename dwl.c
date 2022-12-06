@@ -2610,7 +2610,8 @@ void
 togglescratch(const Arg *arg)
 {
 	Client *c;
-	unsigned int found = 0;
+	Monitor *m_client, *m_selected;
+	unsigned int found = 0, new_monitor;
 
 	/* search for first window that matches the scratchkey */
 	wl_list_for_each(c, &clients, link)
@@ -2620,10 +2621,26 @@ togglescratch(const Arg *arg)
 		}
 
 	if (found) {
-		c->tags = VISIBLEON(c, selmon) ? 0 : selmon->tagset[selmon->seltags];
-
-		focusclient(c->tags == 0 ? focustop(selmon) : c, 1);
-		arrange(selmon);
+		if (VISIBLEON(c, c->mon)) {
+			m_client = c->mon;
+			m_selected = selmon;
+			c->tags = 0;
+			attachclients(m_client);
+			arrange(m_client);
+			focusclient(focustop(m_selected), 1);
+		}
+		else {
+			new_monitor = (c->mon != selmon);
+			c->tags = selmon->tagset[selmon->seltags];
+			attachclients(selmon);
+			if (c->isfloating && new_monitor) {
+				c->geom.x = (selmon->w.width - c->geom.width) / 2 + selmon->m.x;
+				c->geom.y = (selmon->w.height - c->geom.height) / 2 + selmon->m.y;
+				resize(c, c->geom, 0, 1);
+			}
+			focusclient(c->tags == 0 ? focustop(selmon) : c, 1);
+			arrange(selmon);
+		}
 	} else{
 		spawnscratch(arg);
 	}

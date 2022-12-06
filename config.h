@@ -149,7 +149,7 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_t,    XKB_KEY_m,        setlayout,        {.v = &layouts[LAYOUT_MONOCLE]} },
 
 	/* shortcuts */
-	{ MODKEY,                    -1,   XKB_KEY_z,                spawn,            SPAWN("wllock") },
+	{ MODKEY,                    -1,   XKB_KEY_z,                spawn,            SPAWN("wllock", "-f") },
 	{ MODKEY|WLR_MODIFIER_SHIFT, -1,   XKB_KEY_Z,                spawn,            SPAWN("suspend-lock") },
 	{ MODKEY,                    -1,   XKB_KEY_s,                spawn,            SPAWN("fix-stuff") },
 	{ MODKEY,                    -1,   XKB_KEY_w,                spawn,            SPAWN(BROWSER) },

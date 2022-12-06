@@ -477,6 +477,9 @@ applyrules(Client *c)
 		}
 	}
 
+	if (c->scratchkey) {
+		c->geom.height = 400;
+	}
 	if (c->iscentered) {
 		c->geom.x = (mon->w.width - c->geom.width) / 2 + mon->m.x;
 		c->geom.y = (mon->w.height - c->geom.height) / 2 + mon->m.y;

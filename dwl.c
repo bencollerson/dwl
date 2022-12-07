@@ -2674,6 +2674,49 @@ togglefullscreen(const Arg *arg)
 		setfullscreen(sel, !sel->isfullscreen);
 }
 
+/*
+void
+toggletag(const Arg *arg)
+{
+	Monitor *m;
+	unsigned int newtags;
+	Client *sel = selclient();
+	if (!sel)
+		return;
+	newtags = sel->tags ^ (arg->ui & TAGMASK);
+	if (newtags) {
+		wl_list_for_each(m, &mons, link)
+			if (m !=selmon && newtags & m->tagset[m->seltags])
+				return;
+
+		sel->tags = newtags;
+		attachclients(selmon);
+		focusclient(focustop(selmon), 1);
+		arrange(selmon);
+	}
+	printstatus();
+}
+
+void
+toggleview(const Arg *arg)
+{
+	Monitor *m;
+	unsigned int newtagset = selmon ? selmon->tagset[selmon->seltags] ^ (arg->ui & TAGMASK) : 0;
+
+	if (newtagset) {
+		wl_list_for_each(m, &mons, link)
+			if (m !=selmon && newtags & m->tagset[m->seltags])
+				return;
+
+		selmon->tagset[selmon->seltags] = newtagset;
+		attachclients(selmon);
+		focusclient(focustop(selmon), 1);
+		arrange(selmon);
+	}
+	printstatus();
+}
+*/
+
 void
 toggletag(const Arg *arg)
 {

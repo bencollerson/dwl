@@ -1,5 +1,5 @@
 #include <X11/XF86keysym.h>
-#define TERMINAL "st"
+#define TERMINAL "x-terminal-emulator"
 #define BROWSER "qutebrowser"
 
 /* appearance */
@@ -115,7 +115,7 @@ enum layout_types {
 #define SPAWN(...) {.v = (const char*[]){ __VA_ARGS__, NULL } }
 
 /* commands */
-static const char *termcmd[] = { "foot", NULL };
+static const char *termcmd[] = { TERMINAL, NULL };
 static const char *menucmd[] = { "bemenu-run", "--ignorecase", "--prompt", "$", NULL };
 
 static const char *scratchpadcmd[] = { "k", "keepassxc", NULL };

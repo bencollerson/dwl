@@ -7,11 +7,11 @@ static const int sloppyfocus        = 1;  /* focus follows mouse */
 static const unsigned int borderpx  = 1;  /* border pixel of windows */
 static const int lockfullscreen     = 1;  /* 1 will force focus on the fullscreen window */
 static const int smartborders       = 1;
-static const float rootcolor[]      = {0.3, 0.3, 0.3, 1.0};
+static const float rootcolor[]      = {0.3,  0.3,  0.3,  1.0};
 static const float bordercolor[]    = {0.13, 0.13, 0.13, 1.0};
 static const float focuscolor[]     = {0.98, 0.59, 0.12, 1.0};
 /* To conform the xdg-protocol, set the alpha to zero to restore the old behavior */
-static const float fullscreen_bg[]  = {0.1, 0.1, 0.1, 1.0};
+static const float fullscreen_bg[]  = {0.1,  0.1,  0.1,  1.0};
 
 /* tagging */
 static const char *tags[] = {
@@ -116,7 +116,7 @@ enum layout_types {
 
 /* commands */
 static const char *termcmd[] = { TERMINAL, NULL };
-static const char *menucmd[] = { "bemenu-run", "--ignorecase", "--prompt", "$", NULL };
+static const char *menucmd[] = { "run-menu", NULL };
 
 static const char *scratchpadcmd[] = { "k", "keepassxc", NULL };
 
@@ -157,7 +157,7 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT, -1,   XKB_KEY_G,                spawn,            SPAWN("ss") },
 	{ MODKEY,                    -1,   XKB_KEY_y,                spawn,            SPAWN("bookmarker", "yank") },
 	{ MODKEY,                    -1,   XKB_KEY_u,                spawn,            SPAWN("bookmarker", "put") },
-	{ MODKEY,                    -1,   XKB_KEY_v,                spawn,            SPAWN("clipman", "pick", "--tool", "bemenu") },
+	{ MODKEY,                    -1,   XKB_KEY_v,                spawn,            SPAWN("clipboard-menu") },
 	{ MODKEY,                    -1,   XKB_KEY_p,                spawn,            SPAWN("media-command", "playpause") },
 	{ 0,                         -1,   XF86XK_AudioPlay,         spawn,            SPAWN("media-command", "playpause") },
 	{ MODKEY,                    -1,   XKB_KEY_bracketleft,      spawn,            SPAWN("media-command", "prev") },

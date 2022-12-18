@@ -2,7 +2,7 @@
 
 use Modern::Perl;
 
-my $output = "$ENV{XDG_RUNTIME_DIR}/dwl-windowtitle";
+my $windowtitlefile = "$ENV{XDG_RUNTIME_DIR}/dwl-windowtitle";
 
 my $titles = {};
 my $last = '';
@@ -10,10 +10,14 @@ my $last = '';
 sub write_windowtitle {
 	my ($title) = @_;
 
-	open my $out, ">", "$output" or die "failed to open file: '$output' $!";
+	open my $out, ">", "$windowtitlefile" or die "failed to open file: '$windowtitlefile' $!";
 	print $out "$title\n";
 	close $out;
 }
+
+# initialise windowtitlefile
+write_windowtitle('');
+chmod(0600, $windowtitlefile);
 
 while (<>) {
 	chomp;

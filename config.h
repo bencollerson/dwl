@@ -3,15 +3,16 @@
 #define BROWSER "qutebrowser"
 
 /* appearance */
-static const int sloppyfocus        = 1;  /* focus follows mouse */
-static const unsigned int borderpx  = 1;  /* border pixel of windows */
-static const int lockfullscreen     = 1;  /* 1 will force focus on the fullscreen window */
-static const int smartborders       = 1;
-static const float rootcolor[]      = {0.3,  0.3,  0.3,  1.0};
-static const float bordercolor[]    = {0.13, 0.13, 0.13, 1.0};
-static const float focuscolor[]     = {0.98, 0.59, 0.12, 1.0};
+static const int sloppyfocus               = 1;  /* focus follows mouse */
+static const int bypass_surface_visibility = 0;  /* 1 means idle inhibitors will disable idle tracking even if it's surface isn't visible  */
+static const unsigned int borderpx         = 1;  /* border pixel of windows */
+static const int lockfullscreen            = 1;  /* 1 will force focus on the fullscreen window */
+static const int smartborders              = 1;
+static const float rootcolor[]             = {0.3,  0.3,  0.3,  1.0};
+static const float bordercolor[]           = {0.13, 0.13, 0.13, 1.0};
+static const float focuscolor[]            = {0.98, 0.59, 0.12, 1.0};
 /* To conform the xdg-protocol, set the alpha to zero to restore the old behavior */
-static const float fullscreen_bg[]  = {0.1,  0.1,  0.1,  1.0};
+static const float fullscreen_bg[]         = {0.1,  0.1,  0.1,  1.0};
 
 /* tagging */
 static const char *tags[] = {
@@ -95,6 +96,11 @@ LIBINPUT_CONFIG_ACCEL_PROFILE_ADAPTIVE */
 static const enum libinput_config_accel_profile accel_profile = LIBINPUT_CONFIG_ACCEL_PROFILE_ADAPTIVE;
 static const double accel_speed = 0.0;
 static const int cursor_timeout = 5;
+/* You can choose between:
+LIBINPUT_CONFIG_TAP_MAP_LRM -- 1/2/3 finger tap maps to left/right/middle
+LIBINPUT_CONFIG_TAP_MAP_LMR -- 1/2/3 finger tap maps to left/middle/right
+*/
+static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TAP_MAP_LRM;
 
 enum layout_types {
 	LAYOUT_COLUMN,

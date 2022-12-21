@@ -511,7 +511,7 @@ arrange(Monitor *m)
 		m->lt[m->sellt]->arrange(m);
 	motionnotify(0);
 	checkidleinhibitor(NULL);
-	c = selclient();
+	c = focustop(selmon);
 	warpcursor(c);
 }
 
@@ -1380,7 +1380,7 @@ focusstack(const Arg *arg)
 	}
 	/* If only one client is visible on selmon, then c == sel */
 	focusclient(c, 1);
-	warpcursor(selclient());
+	warpcursor(focustop(selmon));
 }
 
 /* We probably should change the name of this, it sounds like
@@ -1725,37 +1725,7 @@ monocle(Monitor *m)
 void
 movestack(const Arg *arg)
 {
-	Client *c, *sel = selclient();
-
-	if (wl_list_length(&clients) <= 1) {
-		return;
-	}
-
-	if (arg->i > 0) {
-		wl_list_for_each(c, &sel->link, link) {
-			if (VISIBLEON(c, selmon) || &c->link == &clients) {
-				break; /* found it */
-			}
-		}
-	} else {
-		wl_list_for_each_reverse(c, &sel->link, link) {
-			if (VISIBLEON(c, selmon) || &c->link == &clients) {
-				break; /* found it */
-			}
-		}
-		/* backup one client */
-		c = wl_container_of(c->link.prev, c, link);
-	}
-
-	wl_list_remove(&sel->link);
-	wl_list_insert(&c->link, &sel->link);
-	arrange(selmon);
-}
-
-void
-movestack(const Arg *arg)
-{
-	Client *c, *sel = selclient();
+	Client *c, *sel = focustop(selmon);
 
 	if (wl_list_length(&clients) <= 1) {
 		return;
@@ -2692,7 +2662,7 @@ toggletag(const Arg *arg)
 {
 	Monitor *m;
 	unsigned int newtags;
-	Client *sel = selclient();
+	Client *sel = focustop(selmon);
 	if (!sel)
 		return;
 	newtags = sel->tags ^ (arg->ui & TAGMASK);
@@ -2938,24 +2908,6 @@ virtualkeyboard(struct wl_listener *listener, void *data)
 {
 	struct wlr_virtual_keyboard_v1 *keyboard = data;
 	createkeyboard(&keyboard->keyboard);
-}
-
-void
-warpcursor(const Client *c) {
-	if (!c && selmon) {
-		wlr_cursor_warp_closest(cursor,
-			  NULL,
-			  selmon->w.x + selmon->w.width / 2.0,
-			  selmon->w.y + selmon->w.height / 2.0);
-	}
-	else if ( c && (cursor->x < c->geom.x ||
-		cursor->x > c->geom.x + c->geom.width ||
-		cursor->y < c->geom.y ||
-		cursor->y > c->geom.y + c->geom.height))
-		wlr_cursor_warp_closest(cursor,
-			  NULL,
-			  c->geom.x + c->geom.width / 2.0,
-			  c->geom.y + c->geom.height / 2.0);
 }
 
 void

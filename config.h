@@ -21,12 +21,13 @@ static const char *tags[] = {
 };
 
 static const Rule rules[] = {
-	/* app_id     title       tags mask  iscentered  isfloating  monitor scratchkey*/
+	/* app_id     title       tags mask  iscentered  isfloating  isterm noswallow monitor scratchkey*/
 	/* examples:
-	{ "Gimp",     NULL,        0,        0,          0,          -1,     O   },
-	{ "firefox",  NULL,        1 << 8,   0,          0,          -1,     0   },
+	{ "Gimp",     NULL,        0,        0,          0,          0,     0,        -1,     O   },
+	{ "firefox",  NULL,        1 << 8,   0,          0,          0,     0,        -1,     0   },
 	*/
-	{ NULL,       "KeePassXC", 0,        1,          1,          -1,     'k' },
+	{ "org.keepassxc.KeePassXC",
+		      NULL,        0,        1,          1,          0,     0,        -1,     'k' },
 };
 
 /* layout(s) */

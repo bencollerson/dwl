@@ -1414,12 +1414,6 @@ inputdevice(struct wl_listener *listener, void *data)
 	if (strcmp(device->name, "Elan Touchpad") == 0) {
 		return;
 	}
-	/*
-	FILE *fp;
-	fp = fopen("/home/benc/dwl.log", "a");
-	fprintf(fp, "%s\n", device->name);
-	fclose(fp);
-	*/
 
 	switch (device->type) {
 	case WLR_INPUT_DEVICE_KEYBOARD:

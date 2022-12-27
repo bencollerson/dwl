@@ -494,7 +494,7 @@ applyrules(Client *c)
 	}
 
 	if (c->scratchkey) {
-		c->geom.height = 400;
+		c->geom.height = mon->w.height * 0.4;
 	}
 	if (c->iscentered) {
 		c->geom.x = (mon->w.width - c->geom.width) / 2 + mon->m.x;
@@ -763,8 +763,14 @@ closemon(Monitor *m)
 		if (c->isfloating && c->geom.x > m->m.width)
 			resize(c, (struct wlr_box){.x = c->geom.x - m->w.width, .y = c->geom.y,
 				.width = c->geom.width, .height = c->geom.height}, 0, 1);
-		if (c->mon == m)
+		if (c->mon == m) {
 			setmon(c, selmon, c->tags);
+			if (c->scratchkey) {
+				c->geom.x = (c->mon->w.width - c->geom.width) / 2 + c->mon->m.x;
+				c->geom.y = (c->mon->w.height - c->geom.height) / 2 + c->mon->m.y;
+				resize(c, c->geom, 0, 1);
+			}
+		}
 	}
 	focusclient(focustop(selmon), 1);
 	printstatus();

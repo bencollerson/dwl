@@ -29,7 +29,7 @@ static const float *focuscolor             = focusyellow;
 static const float *fullscreen_bg          = black;
 
 /* tagging - tagcount should be no greater than 31 */
-static const int tagcount = 26;
+#define TAGCOUNT (26)
 
 static const Rule rules[] = {
 	/* app_id  title  monitor  tags  isfloating  hfact  wfact  isterm  noswallow  scratchkey*/

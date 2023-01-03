@@ -67,7 +67,7 @@
 #define VISIBLEON(C, M)         ((M) && (C)->mon == (M) && ((C)->tags & (M)->tagset[(M)->seltags]))
 #define LENGTH(X)               (sizeof X / sizeof X[0])
 #define END(A)                  ((A) + LENGTH(A))
-#define TAGMASK                 ((1u << tagcount) - 1)
+#define TAGMASK                 ((1u << TAGCOUNT) - 1)
 #define LISTEN(E, L, H)         wl_signal_add((E), ((L)->notify = (H), (L)))
 #define IDLE_NOTIFY_ACTIVITY    wlr_idle_notify_activity(idle, seat), wlr_idle_notifier_v1_notify_activity(idle_notifier, seat)
 
@@ -1461,7 +1461,7 @@ getunusedtag(void)
 	Monitor *m;
 	if (wl_list_empty(&mons))
 		return i;
-	for (i=0; i < tagcount; i++) {
+	for (i=0; i < TAGCOUNT; i++) {
 		wl_list_for_each(m, &mons, link) {
 			if (!(m->tagset[m->seltags] & (1<<i)))
 				return i;

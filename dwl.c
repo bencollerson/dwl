@@ -197,6 +197,23 @@ typedef struct {
 } MonitorRule;
 
 typedef struct {
+	const char *name;
+	int tap_to_click;
+	int tap_and_drag;
+	int drag_lock;
+	int natural_scrolling;
+	int disable_while_typing;
+	int left_handed;
+	int middle_button_emulation;
+	double accel_speed;
+	enum libinput_config_scroll_method scroll_method;
+	enum libinput_config_click_method click_method;
+	uint32_t send_events_mode;
+	enum libinput_config_accel_profile accel_profile;
+	enum libinput_config_tap_button_map button_map;
+} PointerRule;
+
+typedef struct {
 	const char *id;
 	const char *title;
 	unsigned int tags;
@@ -1003,41 +1020,49 @@ createnotify(struct wl_listener *listener, void *data)
 void
 createpointer(struct wlr_pointer *pointer)
 {
-	if (wlr_input_device_is_libinput(&pointer->base)) {
-		struct libinput_device *libinput_device =  (struct libinput_device*)
-			wlr_libinput_get_device_handle(&pointer->base);
+	const PointerRule *r;
+	for (r = pointerrules; r < END(pointerrules); r++) {
+		if (wlr_input_device_is_libinput(&pointer->base)) {
+			struct libinput_device *libinput_device =  (struct libinput_device*)
+				wlr_libinput_get_device_handle(&pointer->base);
+			const char *name = libinput_device_get_name(libinput_device);
 
-		if (libinput_device_config_tap_get_finger_count(libinput_device)) {
-			libinput_device_config_tap_set_enabled(libinput_device, tap_to_click);
-			libinput_device_config_tap_set_drag_enabled(libinput_device, tap_and_drag);
-			libinput_device_config_tap_set_drag_lock_enabled(libinput_device, drag_lock);
-			libinput_device_config_tap_set_button_map(libinput_device, button_map);
-		}
+			if (!r->name || strstr(name, r->name)) {
+				if (libinput_device_config_tap_get_finger_count(libinput_device)) {
+					libinput_device_config_tap_set_enabled(libinput_device, r->tap_to_click);
+					libinput_device_config_tap_set_drag_enabled(libinput_device, r->tap_and_drag);
+					libinput_device_config_tap_set_drag_lock_enabled(libinput_device, r->drag_lock);
+					libinput_device_config_tap_set_button_map(libinput_device, r->button_map);
+				}
 
-		if (libinput_device_config_scroll_has_natural_scroll(libinput_device))
-			libinput_device_config_scroll_set_natural_scroll_enabled(libinput_device, natural_scrolling);
+				if (libinput_device_config_scroll_has_natural_scroll(libinput_device))
+					libinput_device_config_scroll_set_natural_scroll_enabled(libinput_device, r->natural_scrolling);
 
-		if (libinput_device_config_dwt_is_available(libinput_device))
-			libinput_device_config_dwt_set_enabled(libinput_device, disable_while_typing);
+				if (libinput_device_config_dwt_is_available(libinput_device))
+					libinput_device_config_dwt_set_enabled(libinput_device, r->disable_while_typing);
 
-		if (libinput_device_config_left_handed_is_available(libinput_device))
-			libinput_device_config_left_handed_set(libinput_device, left_handed);
+				if (libinput_device_config_left_handed_is_available(libinput_device))
+					libinput_device_config_left_handed_set(libinput_device, r->left_handed);
 
-		if (libinput_device_config_middle_emulation_is_available(libinput_device))
-			libinput_device_config_middle_emulation_set_enabled(libinput_device, middle_button_emulation);
+				if (libinput_device_config_middle_emulation_is_available(libinput_device))
+					libinput_device_config_middle_emulation_set_enabled(libinput_device, r->middle_button_emulation);
 
-		if (libinput_device_config_scroll_get_methods(libinput_device) != LIBINPUT_CONFIG_SCROLL_NO_SCROLL)
-			libinput_device_config_scroll_set_method (libinput_device, scroll_method);
-		
-		if (libinput_device_config_click_get_methods(libinput_device) != LIBINPUT_CONFIG_CLICK_METHOD_NONE)
-			libinput_device_config_click_set_method (libinput_device, click_method);
+				if (libinput_device_config_scroll_get_methods(libinput_device) != LIBINPUT_CONFIG_SCROLL_NO_SCROLL)
+					libinput_device_config_scroll_set_method (libinput_device, r->scroll_method);
 
-		if (libinput_device_config_send_events_get_modes(libinput_device))
-			libinput_device_config_send_events_set_mode(libinput_device, send_events_mode);
+				if (libinput_device_config_click_get_methods(libinput_device) != LIBINPUT_CONFIG_CLICK_METHOD_NONE)
+					libinput_device_config_click_set_method (libinput_device, r->click_method);
 
-		if (libinput_device_config_accel_is_available(libinput_device)) {
-			libinput_device_config_accel_set_profile(libinput_device, accel_profile);
-			libinput_device_config_accel_set_speed(libinput_device, accel_speed);
+				if (libinput_device_config_send_events_get_modes(libinput_device))
+					libinput_device_config_send_events_set_mode(libinput_device, r->send_events_mode);
+
+				if (libinput_device_config_accel_is_available(libinput_device)) {
+					libinput_device_config_accel_set_profile(libinput_device, r->accel_profile);
+					libinput_device_config_accel_set_speed(libinput_device, r->accel_speed);
+				}
+
+				break;
+			}
 		}
 	}
 

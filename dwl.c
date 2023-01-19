@@ -493,7 +493,7 @@ applyrules(Client *c)
 		}
 	}
 
-	if (c->scratchkey) {
+	if (c->scratchkey && c->scratchkey == 'k') {
 		c->geom.height = mon->w.height * 0.4;
 	}
 	if (c->iscentered) {
@@ -1522,6 +1522,10 @@ keybinding(uint32_t mods, xkb_keysym_t sym)
 	int handled = 0;
 	int current = 0;
 	const Key *k;
+
+	if (chainkey != -1) {
+		handled = 1;
+	}
 
 	for (k = keys; k < END(keys); k++) {
 		if (

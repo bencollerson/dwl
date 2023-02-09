@@ -3008,6 +3008,9 @@ virtualkeyboard(struct wl_listener *listener, void *data)
 
 void
 warpcursor(const Client *c) {
+	if (cursor_mode != CurNormal) {
+		return;
+	}
 	if (!c && selmon) {
 		wlr_cursor_warp_closest(cursor,
 			  NULL,

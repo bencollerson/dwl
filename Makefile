@@ -56,6 +56,8 @@ install: dwl
 	chmod 755 $(DESTDIR)$(PREFIX)/bin/dwl-getappinfo
 	cp -f dwl-clipman $(DESTDIR)$(PREFIX)/bin
 	chmod 755 $(DESTDIR)$(PREFIX)/bin/dwl-clipman
+	cp -f dwl-keys $(DESTDIR)$(PREFIX)/bin
+	chmod 755 $(DESTDIR)$(PREFIX)/bin/dwl-keys
 uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/dwl $(DESTDIR)$(MANDIR)/man1/dwl.1
 

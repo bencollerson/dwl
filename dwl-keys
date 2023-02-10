@@ -3,90 +3,94 @@
 # Sure would be nice if every app supported XF86Copy, XF86Paste, and XF86Cut
 # in the mean time, there's this hacky script
 
-# bind `dwl-keys copy` to Super+C etc.
+# requirements:
+#
+#   sudo apt install wtype xdotool
 
-action=$1
+# use your global keybinding system to
+# bind `dwl-keys copy`  to Super+C
+# bind `dwl-keys paste` to Super+V
+# bind `dwl-keys cut`   to Super+X
+
 read -r appid < $XDG_RUNTIME_DIR/dwl-appid
 
-case "$action" in
-	"copy")
-		case "$appid" in
-			# rdesktop runs in Xwayland, needs a tiny delay, escape
-			# to hide the start menu, and ctrl+c
-			"rdesktop" )
-				sleep .2; xdotool key Escape ctrl+c
-				;;
+copy() {
+	case "$appid" in
+		# rdesktop runs in Xwayland, needs a tiny delay, escape
+		# to hide the start menu, and ctrl+c
+		rdesktop )
+			sleep .2; xdotool key Escape ctrl+c
+			;;
 
-			# Xwayland needs ctrl+c
-			"Google-chrome" | "Chromium" )
-				xdotool key ctrl+c
-				;;
+		# Xwayland needs ctrl+c
+		Google-chrome | Chromium )
+			xdotool key ctrl+c
+			;;
 
-			# Wayland & needs ctrl+c
-			"org.keepassxc.KeePassXC" | "brave-browser" | "notepadqq" )
-				wtype -M ctrl C
-				;;
+		# Wayland & needs ctrl+c
+		org.keepassxc.KeePassXC | brave-browser | notepadqq )
+			wtype -M ctrl C
+			;;
 
-			# proper behaviour
-			"foot" )
-				wtype -k XF86Copy
-				;;
+		# proper behaviour
+		foot )
+			wtype -k XF86Copy
+			;;
 
-			# unfortunate default
-			*)
-				wtype -M ctrl C
-				;;
-		esac
-		;;
+		# unfortunate default
+		*)
+			wtype -M ctrl C
+			;;
+	esac
+}
 
-	"paste")
-		case "$appid" in
-			"rdesktop" )
-				sleep .2; xdotool key Escape ctrl+v
-				;;
+paste() {
+	case "$appid" in
+		rdesktop )
+			sleep .2; xdotool key Escape ctrl+v
+			;;
 
-			"Google-chrome" | "Chromium" )
-				xdotool key ctrl+v
-				;;
+		Google-chrome | Chromium )
+			xdotool key ctrl+v
+			;;
 
-			"org.keepassxc.KeePassXC" | "brave-browser" | "notepadqq" )
-				wtype -M ctrl V
-				;;
+		org.keepassxc.KeePassXC | brave-browser | notepadqq )
+			wtype -M ctrl V
+			;;
 
-			"foot" )
-				wtype -k XF86Paste
-				;;
+		foot )
+			wtype -k XF86Paste
+			;;
 
-			*)
-				wtype -M ctrl V
-				;;
-		esac
-		;;
+		*)
+			wtype -M ctrl V
+			;;
+	esac
+}
 
-	"cut")
-		case "$appid" in
-			"rdesktop" )
-				sleep .2; xdotool key Escape ctrl+x
-				;;
+cut() {
+	case "$appid" in
+		rdesktop )
+			sleep .2; xdotool key Escape ctrl+x
+			;;
 
-			"Google-chrome" | "Chromium" )
-				xdotool key ctrl+x
-				;;
+		Google-chrome | Chromium )
+			xdotool key ctrl+x
+			;;
 
-			"org.keepassxc.KeePassXC" | "brave-browser" | "notepadqq" )
-				wtype -M ctrl X
-				;;
+		org.keepassxc.KeePassXC | brave-browser | notepadqq )
+			wtype -M ctrl X
+			;;
 
-			"foot" )
-				wtype -k XF86Cut
-				;;
+#		not a thing
+#		foot )
+#			wtype -k XF86Cut
+#			;;
 
-			*)
-				wtype -M ctrl X
-				;;
-		esac
-		;;
-esac
+		*)
+			wtype -M ctrl X
+			;;
+	esac
+}
 
-
-
+$1

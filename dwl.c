@@ -271,10 +271,12 @@ static void focusmon(const Arg *arg);
 static void focusstack(const Arg *arg);
 static Client *focustop(Monitor *m);
 static void fullscreennotify(struct wl_listener *listener, void *data);
+static pid_t getparentprocess(pid_t p);
 static size_t getunusedtag(void);
 static void handlecursoractivity(bool restore_focus);
 static int hidecursor(void *data);
 static void inputdevice(struct wl_listener *listener, void *data);
+static int isdescprocess(pid_t p, pid_t c);
 static int keybinding(uint32_t mods, xkb_keysym_t sym);
 static void keypress(struct wl_listener *listener, void *data);
 static void keypressmod(struct wl_listener *listener, void *data);
@@ -314,8 +316,10 @@ static void setup(void);
 static void spawn(const Arg *arg);
 static void spawnscratch(const Arg *arg);
 static void startdrag(struct wl_listener *listener, void *data);
+static void swallow(Client *c, Client *w);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
+static Client *termforwin(Client *w);
 static void tile(Monitor *m);
 static void togglefloating(const Arg *arg);
 static void togglefullscreen(const Arg *arg);
@@ -329,14 +333,10 @@ static void urgent(struct wl_listener *listener, void *data);
 static void view(const Arg *arg);
 static void virtualkeyboard(struct wl_listener *listener, void *data);
 static void warpcursor(const Client *c);
-static Monitor *xytomon(double x, double y);
 static struct wlr_scene_node *xytonode(double x, double y, struct wlr_surface **psurface,
 		Client **pc, LayerSurface **pl, double *nx, double *ny);
+static Monitor *xytomon(double x, double y);
 static void zoom(const Arg *arg);
-static pid_t getparentprocess(pid_t p);
-static int isdescprocess(pid_t p, pid_t c);
-static Client *termforwin(Client *w);
-static void swallow(Client *c, Client *w);
 
 /* variables */
 static const char broken[] = "broken";
@@ -777,6 +777,31 @@ closemon(Monitor *m)
 }
 
 void
+col(Monitor *m)
+{
+	Client *c;
+	unsigned int n = 0, i = 0, draw_borders = 1;
+
+	wl_list_for_each(c, &clients, link)
+		if (VISIBLEON(c, m) && !c->isfloating && !c->isfullscreen)
+			n++;
+
+	if (n == smartborders)
+		draw_borders = 0;
+
+	wl_list_for_each(c, &clients, link) {
+		if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
+			continue;
+		resize(c, (struct wlr_box){
+				.x = m->w.x + i * m->w.width / n,
+				.y = m->w.y,
+				.width = m->w.width / n,
+				.height = m->w.height}, 0, draw_borders);
+		i++;
+	}
+}
+
+void
 commitlayersurfacenotify(struct wl_listener *listener, void *data)
 {
 	LayerSurface *layersurface = wl_container_of(listener, layersurface, surface_commit);
@@ -921,22 +946,6 @@ createlayersurface(struct wl_listener *listener, void *data)
 	layersurface->mapped = 1;
 	arrangelayers(layersurface->mon);
 	wlr_layer_surface->current = old_state;
-}
-
-size_t
-getunusedtag(void)
-{
-	size_t i = 0;
-	Monitor *m;
-	if (wl_list_empty(&mons))
-		return i;
-	for (i=0; i < LENGTH(tags); i++) {
-		wl_list_for_each(m, &mons, link) {
-			if (!(m->tagset[m->seltags] & (1<<i)))
-				return i;
-		}
-	}
-	return i;
 }
 
 void
@@ -1440,41 +1449,20 @@ getparentprocess(pid_t p)
 	return (pid_t)v;
 }
 
-int
-isdescprocess(pid_t p, pid_t c)
+size_t
+getunusedtag(void)
 {
-	while (p != c && c != 0)
-		c = getparentprocess(c);
-
-	return (int)c;
-}
-
-Client *
-termforwin(Client *w)
-{
-	Client *c;
-
-	if (!w->pid || w->isterm || w->noswallow)
-		return NULL;
-
-	wl_list_for_each(c, &clients, link)
-		if (c->isterm && !c->swallowing && c->pid && isdescprocess(c->pid, w->pid))
-			return c;
-
-	return NULL;
-}
-
-void
-swallow(Client *c, Client *w) {
-		c->bw = w->bw;
-		c->isfloating = w->isfloating;
-		c->isurgent = w->isurgent;
-		c->isfullscreen = w->isfullscreen;
-		resize(c, w->geom, 0, 1);
-		wl_list_insert(&w->link, &c->link);
-		wl_list_insert(&w->flink, &c->flink);
-		wlr_scene_node_set_enabled(&w->scene->node, 0);
-		wlr_scene_node_set_enabled(&c->scene->node, 1);
+	size_t i = 0;
+	Monitor *m;
+	if (wl_list_empty(&mons))
+		return i;
+	for (i=0; i < LENGTH(tags); i++) {
+		wl_list_for_each(m, &mons, link) {
+			if (!(m->tagset[m->seltags] & (1<<i)))
+				return i;
+		}
+	}
+	return i;
 }
 
 void
@@ -1509,6 +1497,15 @@ inputdevice(struct wl_listener *listener, void *data)
 	if (!wl_list_empty(&keyboards))
 		caps |= WL_SEAT_CAPABILITY_KEYBOARD;
 	wlr_seat_set_capabilities(seat, caps);
+}
+
+int
+isdescprocess(pid_t p, pid_t c)
+{
+	while (p != c && c != 0)
+		c = getparentprocess(c);
+
+	return (int)c;
 }
 
 int
@@ -2595,6 +2592,19 @@ startdrag(struct wl_listener *listener, void *data)
 }
 
 void
+swallow(Client *c, Client *w) {
+		c->bw = w->bw;
+		c->isfloating = w->isfloating;
+		c->isurgent = w->isurgent;
+		c->isfullscreen = w->isfullscreen;
+		resize(c, w->geom, 0, 1);
+		wl_list_insert(&w->link, &c->link);
+		wl_list_insert(&w->flink, &c->flink);
+		wlr_scene_node_set_enabled(&w->scene->node, 0);
+		wlr_scene_node_set_enabled(&c->scene->node, 1);
+}
+
+void
 tag(const Arg *arg)
 {
 	Monitor *m;
@@ -2624,29 +2634,19 @@ tagmon(const Arg *arg)
 	}
 }
 
-void
-col(Monitor *m)
+Client *
+termforwin(Client *w)
 {
 	Client *c;
-	unsigned int n = 0, i = 0, draw_borders = 1;
+
+	if (!w->pid || w->isterm || w->noswallow)
+		return NULL;
 
 	wl_list_for_each(c, &clients, link)
-		if (VISIBLEON(c, m) && !c->isfloating && !c->isfullscreen)
-			n++;
+		if (c->isterm && !c->swallowing && c->pid && isdescprocess(c->pid, w->pid))
+			return c;
 
-	if (n == smartborders)
-		draw_borders = 0;
-
-	wl_list_for_each(c, &clients, link) {
-		if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
-			continue;
-		resize(c, (struct wlr_box){
-				.x = m->w.x + i * m->w.width / n,
-				.y = m->w.y,
-				.width = m->w.width / n,
-				.height = m->w.height}, 0, draw_borders);
-		i++;
-	}
+	return NULL;
 }
 
 void

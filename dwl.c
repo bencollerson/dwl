@@ -3025,6 +3025,7 @@ warpcursor(const Client *c) {
 			  NULL,
 			  c->geom.x + c->geom.width / 2.0,
 			  c->geom.y + c->geom.height / 2.0);
+	handlecursoractivity(false);
 }
 
 Monitor *

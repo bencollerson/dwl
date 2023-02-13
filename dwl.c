@@ -2921,8 +2921,15 @@ updatemons(struct wl_listener *listener, void *data)
 
 	if (selmon && selmon->wlr_output->enabled) {
 		wl_list_for_each(c, &clients, link)
-			if (!c->mon && client_is_mapped(c))
+			if (!c->mon && client_is_mapped(c)) {
 				setmon(c, selmon, c->tags);
+				if (c->scratchkey && c->isfloating) {
+					c->geom.x = (selmon->w.width - c->geom.width) / 2 + selmon->m.x;
+					c->geom.y = (selmon->w.height - c->geom.height) / 2 + selmon->m.y;
+					resize(c, c->geom, 0, 1);
+				}
+			}
+
 		focusclient(focustop(selmon), 1);
 		if (selmon->lock_surface) {
 			client_notify_enter(selmon->lock_surface->surface,

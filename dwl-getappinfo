@@ -4,11 +4,14 @@ use Modern::Perl;
 
 my $titlefile = "$ENV{XDG_RUNTIME_DIR}/dwl-title";
 my $appidfile = "$ENV{XDG_RUNTIME_DIR}/dwl-appid";
+my $ctypefile = "$ENV{XDG_RUNTIME_DIR}/dwl-ctype";
 
 my $titles = {};
 my $appids = {};
+my $ctypes = {};
 my $lasttitle = '';
 my $lastappid = '';
+my $lastctype = -1;
 
 sub writetext {
 	my ($outputfile, $text) = @_;
@@ -26,6 +29,7 @@ sub initfile {
 
 initfile($titlefile);
 initfile($appidfile);
+initfile($ctypefile);
 
 while (<>) {
 	chomp;
@@ -40,6 +44,10 @@ while (<>) {
 			$appids->{$monitor} = $value;
 			last;
 		};
+		/ctype/ && do {
+			$ctypes->{$monitor} = $value;
+			last;
+		};
 		/selmon/ && do {
 			if ($value eq '1') {
 				if (exists($titles->{$monitor}) and $lasttitle ne $titles->{$monitor}) {
@@ -49,6 +57,10 @@ while (<>) {
 				if (exists($appids->{$monitor}) and $lastappid ne $appids->{$monitor}) {
 					writetext($appidfile, $appids->{$monitor});
 					$lastappid = $appids->{$monitor};
+				}
+				if (exists($ctypes->{$monitor}) and $lastctype ne $ctypes->{$monitor}) {
+					writetext($ctypefile, $ctypes->{$monitor});
+					$lastctype = $ctypes->{$monitor};
 				}
 			}
 			last;

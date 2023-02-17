@@ -3,59 +3,59 @@
 # Sure would be nice if every app supported XF86Copy, XF86Paste, and XF86Cut
 # in the mean time, there's this hacky script
 
-# requirements:
-#
-#   sudo apt install wtype xdotool
-
 # use your global keybinding system to
 # bind `dwl-keys copy`  to Super+C
 # bind `dwl-keys paste` to Super+V
 # bind `dwl-keys cut`   to Super+X
 
-read -r appid < $XDG_RUNTIME_DIR/dwl-appid
+ctrl() {
+	char="$1"
+
+	read -r ctype < $XDG_RUNTIME_DIR/dwl-ctype
+
+	# ctype 0 or 1 is wayland, 2 or 3 is xwayland
+	if [ "$ctype" -ge "2" ]; then
+		xdotool key ctrl+"$char"
+	else
+		wtype -M ctrl $char
+	fi
+}
 
 copy() {
+	appid="$1"
+
 	case "$appid" in
-		# rdesktop runs in Xwayland, needs a tiny delay, escape
-		# to hide the start menu, and ctrl+c
+		# special cases for certain apps
 		rdesktop )
-			sleep .2; xdotool key Escape ctrl+c
+			xdotool sleep .2 key Escape ctrl+c
 			;;
 
-		# Xwayland needs ctrl+c
-		Google-chrome | Chromium )
-			xdotool key ctrl+c
+		Gimp )
+			xdotool sleep .1 key ctrl+c
 			;;
 
-		# Wayland & needs ctrl+c
-		org.keepassxc.KeePassXC | brave-browser | notepadqq )
-			wtype -M ctrl C
-			;;
-
-		# proper behaviour
 		foot )
 			wtype -k XF86Copy
 			;;
 
-		# unfortunate default
+		# otherwise default behavior dependng on whether we have an
+		# Xwayland or wayland client
 		*)
-			wtype -M ctrl C
+			ctrl C
 			;;
 	esac
 }
 
 paste() {
+	appid="$1"
+
 	case "$appid" in
 		rdesktop )
-			sleep .2; xdotool key Escape ctrl+v
+			xdotool sleep .2 key Escape ctrl+v
 			;;
 
-		Google-chrome | Chromium )
-			xdotool key ctrl+v
-			;;
-
-		org.keepassxc.KeePassXC | brave-browser | notepadqq )
-			wtype -M ctrl V
+		Gimp )
+			xdotool sleep .1 key ctrl+v
 			;;
 
 		foot )
@@ -63,34 +63,38 @@ paste() {
 			;;
 
 		*)
-			wtype -M ctrl V
+			ctrl V
 			;;
 	esac
 }
 
 cut() {
+	appid="$1"
+
 	case "$appid" in
 		rdesktop )
-			sleep .2; xdotool key Escape ctrl+x
+			xdotool sleep .2 key Escape ctrl+x
 			;;
 
-		Google-chrome | Chromium )
-			xdotool key ctrl+x
+		Gimp )
+			xdotool sleep .1 key ctrl+x
 			;;
-
-		org.keepassxc.KeePassXC | brave-browser | notepadqq )
-			wtype -M ctrl X
-			;;
-
-#		not a thing
-#		foot )
-#			wtype -k XF86Cut
-#			;;
 
 		*)
-			wtype -M ctrl X
+			ctrl X
 			;;
 	esac
 }
 
-$1
+command="$1"
+case "$command" in
+	copy | paste | cut )
+		read -r appid < $XDG_RUNTIME_DIR/dwl-appid
+		$command "$appid"
+		;;
+
+	*)
+		echo "usage: $0 (copy|paste|cut)"
+		exit 1
+		;;
+esac

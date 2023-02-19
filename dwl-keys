@@ -15,7 +15,7 @@ ctrl() {
 
 	# ctype 0 or 1 is wayland, 2 or 3 is xwayland
 	if [ "$ctype" -ge "2" ]; then
-		xdotool key ctrl+"$char"
+		xdotool sleep .1 key ctrl+"$char"
 	else
 		wtype -M ctrl $char
 	fi
@@ -28,10 +28,6 @@ copy() {
 		# special cases for certain apps
 		rdesktop )
 			xdotool sleep .2 key Escape ctrl+c
-			;;
-
-		Gimp )
-			xdotool sleep .1 key ctrl+c
 			;;
 
 		foot )
@@ -54,10 +50,6 @@ paste() {
 			xdotool sleep .2 key Escape ctrl+v
 			;;
 
-		Gimp )
-			xdotool sleep .1 key ctrl+v
-			;;
-
 		foot )
 			wtype -k XF86Paste
 			;;
@@ -74,10 +66,6 @@ cut() {
 	case "$appid" in
 		rdesktop )
 			xdotool sleep .2 key Escape ctrl+x
-			;;
-
-		Gimp )
-			xdotool sleep .1 key ctrl+x
 			;;
 
 		*)

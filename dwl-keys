@@ -26,7 +26,7 @@ copy() {
 
 	case "$appid" in
 		# special cases for certain apps
-		rdesktop )
+		rdesktop | xfreerdp )
 			xdotool sleep .2 key Escape ctrl+c
 			;;
 
@@ -46,7 +46,7 @@ paste() {
 	appid="$1"
 
 	case "$appid" in
-		rdesktop )
+		rdesktop | xfreerdp )
 			xdotool sleep .2 key Escape ctrl+v
 			;;
 
@@ -64,7 +64,7 @@ cut() {
 	appid="$1"
 
 	case "$appid" in
-		rdesktop )
+		rdesktop | xfreerdp )
 			xdotool sleep .2 key Escape ctrl+x
 			;;
 

@@ -8,7 +8,6 @@ static const int bypass_surface_visibility = 0;  /* 1 means idle inhibitors will
 static const unsigned int borderpx         = 1;  /* border pixel of windows */
 static const int lockfullscreen            = 1;  /* 1 will force focus on the fullscreen window */
 static const int smartborders              = 1;
-static const float rootcolor[]             = {0.3,  0.3,  0.3,  1.0};
 static const float bordercolor[]           = {0.13, 0.13, 0.13, 1.0};
 static const float focuscolor[]            = {0.98, 0.59, 0.12, 1.0};
 /* To conform the xdg-protocol, set the alpha to zero to restore the old behavior */

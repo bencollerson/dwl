@@ -502,7 +502,7 @@ applyrules(Client *c)
 	}
 
 	wlr_scene_node_reparent(&c->scene->node, layers[c->isfloating ? LyrFloat : LyrTile]);
-	setmon(c, mon, c->scratchkey ? mon->tagset[mon->seltags] : newtags);
+	setmon(c, mon, newtags);
 }
 
 void
@@ -2570,7 +2570,8 @@ spawn(const Arg *arg)
 	}
 }
 
-void spawnscratch(const Arg *arg)
+void
+spawnscratch(const Arg *arg)
 {
 	if (fork() == 0) {
 		dup2(STDERR_FILENO, STDOUT_FILENO);

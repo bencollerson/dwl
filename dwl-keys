@@ -8,19 +8,6 @@
 # bind `dwl-keys paste` to Super+V
 # bind `dwl-keys cut`   to Super+X
 
-ctrl() {
-	char="$1"
-
-	read -r ctype < $XDG_RUNTIME_DIR/dwl-ctype
-
-	# ctype 0 or 1 is wayland, 2 or 3 is xwayland
-	if [ "$ctype" -ge "2" ]; then
-		xdotool sleep .1 key ctrl+"$char"
-	else
-		wtype -M ctrl $char
-	fi
-}
-
 copy() {
 	appid="$1"
 
@@ -37,7 +24,7 @@ copy() {
 		# otherwise default behavior dependng on whether we have an
 		# Xwayland or wayland client
 		*)
-			ctrl C
+			wtype -M ctrl c
 			;;
 	esac
 }
@@ -55,7 +42,7 @@ paste() {
 			;;
 
 		*)
-			ctrl V
+			wtype -M ctrl v
 			;;
 	esac
 }
@@ -69,20 +56,38 @@ cut() {
 			;;
 
 		*)
-			ctrl X
+			wtype -M ctrl x
+			;;
+	esac
+}
+
+deleteword() {
+	appid="$1"
+
+	case "$appid" in
+		rdesktop | xfreerdp )
+			xdotool sleep .2 key Escape key ctrl+BackSpace
+			;;
+
+		foot )
+			wtype -M ctrl w
+			;;
+
+		*)
+			wtype -M ctrl -k backspace
 			;;
 	esac
 }
 
 command="$1"
 case "$command" in
-	copy | paste | cut )
+	copy | paste | cut | deleteword )
 		read -r appid < $XDG_RUNTIME_DIR/dwl-appid
 		$command "$appid"
 		;;
 
 	*)
-		echo "usage: $0 (copy|paste|cut)"
+		echo "usage: $0 (copy|paste|cut|deleteword)"
 		exit 1
 		;;
 esac

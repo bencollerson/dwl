@@ -125,7 +125,8 @@ struct Client{
 #endif
 	unsigned int bw;
 	uint32_t tags;
-	int iscentered, isfloating, isurgent, isfullscreen, isterm, noswallow;
+	int isfloating, iscentered, isurgent, isfullscreen, isterm, noswallow;
+	float hfact, wfact;
 	uint32_t resize; /* configure serial of a pending resize */
 	char scratchkey;
 	pid_t pid;
@@ -211,12 +212,13 @@ typedef struct {
 typedef struct {
 	const char *id;
 	const char *title;
-	uint32_t tags;
-	int iscentered;
+	int monitor;
 	int isfloating;
+	int iscentered;
+	float hfact;
+	float wfact;
 	int isterm;
 	int noswallow;
-	int monitor;
 	const char scratchkey;
 } Rule;
 
@@ -480,11 +482,13 @@ applyrules(Client *c)
 	for (r = rules; r < END(rules); r++) {
 		if ((!r->title || strstr(title, r->title))
 				&& (!r->id || strstr(appid, r->id))) {
-			c->iscentered = r->iscentered;
 			c->isfloating = r->isfloating;
-			c->scratchkey = r->scratchkey;
+			c->iscentered = r->iscentered;
+			c->hfact      = r->hfact;
+			c->wfact      = r->wfact;
 			c->isterm     = r->isterm;
 			c->noswallow  = r->noswallow;
+			c->scratchkey = r->scratchkey;
 			newtags |= r->tags;
 			i = 0;
 			wl_list_for_each(m, &mons, link)
@@ -493,12 +497,17 @@ applyrules(Client *c)
 		}
 	}
 
-	if (c->scratchkey && c->scratchkey == 'k') {
-		c->geom.height = mon->w.height * 0.4;
-	}
-	if (c->iscentered) {
-		c->geom.x = (mon->w.width - c->geom.width) / 2 + mon->m.x;
-		c->geom.y = (mon->w.height - c->geom.height) / 2 + mon->m.y;
+	if (c->isfloating) {
+		if (c->hfact > 0 && c->hfact <= 1) {
+			c->geom.height = mon->w.height * c->hfact;
+		}
+		if (c->wfact > 0 && c->wfact <= 1) {
+			c->geom.width = mon->w.width * c->wfact;
+		}
+		if (c->iscentered) {
+			c->geom.x = (mon->w.width - c->geom.width) / 2 + mon->m.x;
+			c->geom.y = (mon->w.height - c->geom.height) / 2 + mon->m.y;
+		}
 	}
 
 	wlr_scene_node_reparent(&c->scene->node, layers[c->isfloating ? LyrFloat : LyrTile]);

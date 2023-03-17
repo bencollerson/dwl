@@ -20,14 +20,10 @@ static const char *tags[] = {
 };
 
 static const Rule rules[] = {
-	/* app_id     title       tags mask  iscentered  isfloating  isterm noswallow monitor scratchkey*/
-	/* examples:
-	{ "Gimp",     NULL,        0,        0,          0,          0,     0,        -1,     O   },
-	{ "firefox",  NULL,        1 << 8,   0,          0,          0,     0,        -1,     0   },
-	*/
+	/* app_id  title  monitor  tags  isfloating  iscentered  hfact  wfact  isterm  noswallow  scratchkey*/
 	{ "org.keepassxc.KeePassXC",
-		      NULL,        0,        1,          1,          0,     0,        -1,     'k' },
-	{ "foot",     NULL,        0,        0,          0,          1,     0,        -1,     0   },
+		   NULL,  -1,      0,    1,          1,          0.4,   0.4,   0,      0,         'k' },
+	{ "foot",  NULL,  -1,      0,    0,          0,          0,     0,     1,      0,         0   },
 };
 
 /* layout(s) */

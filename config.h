@@ -24,6 +24,8 @@ static const Rule rules[] = {
 	{ "org.keepassxc.KeePassXC",
 		   NULL,  -1,      0,    1,          1,          0.4,   0.4,   0,      0,         'k' },
 	{ "foot",  NULL,  -1,      0,    0,          0,          0,     0,     1,      0,         0   },
+	{ "udiskie",
+		   NULL,  -1,      0,    1,          1,          0.4,   0.4,   0,      0,         0 },
 };
 
 /* layout(s) */

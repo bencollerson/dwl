@@ -770,8 +770,13 @@ closemon(Monitor *m)
 
 	wl_list_for_each(c, &clients, link) {
 		if (c->isfloating && c->geom.x > m->m.width)
-			resize(c, (struct wlr_box){.x = c->geom.x - m->w.width, .y = c->geom.y,
-				.width = c->geom.width, .height = c->geom.height}, 0, 1);
+			resize(c, (struct wlr_box){
+					.x = c->geom.x - m->w.width,
+					.y = c->geom.y,
+					.width = c->geom.width,
+					.height = c->geom.height
+				}, 0, 1
+			);
 		if (c->mon == m) {
 			setmon(c, selmon, c->tags);
 			if (c->scratchkey) {
@@ -2340,7 +2345,7 @@ setmon(Client *c, Monitor *m, uint32_t newtags)
 		/* Make sure window actually overlaps with the monitor */
 		resize(c, c->geom, 0, 1);
 		wlr_surface_send_enter(client_surface(c), m->wlr_output);
-		c->tags = newtags ? newtags : m->tagset[m->seltags]; /* assign tags of target monitor */
+		c->tags = (newtags || c->scratchkey) ? newtags : m->tagset[m->seltags]; /* assign tags of target monitor */
 		setfullscreen(c, c->isfullscreen); /* This will call arrange(c->mon) */
 	}
 	focusclient(focustop(selmon), 1);

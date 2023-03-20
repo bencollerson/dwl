@@ -3039,7 +3039,7 @@ warpcursor(const Client *c) {
 	if (!c && selmon) {
 		wlr_cursor_warp_closest(cursor,
 			  NULL,
-			  selmon->w.x + selmon->w.width / 2.0,
+			  selmon->w.x + selmon->w.width / 2.1,
 			  selmon->w.y + selmon->w.height / 2.0);
 	}
 	else if ( c && (cursor->x < c->geom.x ||
@@ -3048,7 +3048,7 @@ warpcursor(const Client *c) {
 		cursor->y > c->geom.y + c->geom.height))
 		wlr_cursor_warp_closest(cursor,
 			  NULL,
-			  c->geom.x + c->geom.width / 2.0,
+			  c->geom.x + c->geom.width / 2.1,
 			  c->geom.y + c->geom.height / 2.0);
 	handlecursoractivity(false);
 }

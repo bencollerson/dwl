@@ -15,7 +15,7 @@ static const float focuscolor[]            = {0.98, 0.59, 0.12, 1.0};
 /* To conform the xdg-protocol, set the alpha to zero to restore the old behavior */
 static const float fullscreen_bg[]         = {0.1,  0.1,  0.1,  1.0};
 
-/* tagging */
+/* tagging - tagcount should be no greater than 31 */
 int tagcount = 26;
 
 static const Rule rules[] = {

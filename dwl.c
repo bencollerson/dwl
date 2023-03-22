@@ -1474,7 +1474,7 @@ getunusedtag(void)
 	Monitor *m;
 	if (wl_list_empty(&mons))
 		return i;
-	for (i=0; i < LENGTH(tags); i++) {
+	for (i=0; i < tagcount; i++) {
 		wl_list_for_each(m, &mons, link) {
 			if (!(m->tagset[m->seltags] & (1<<i)))
 				return i;

@@ -16,10 +16,7 @@ static const float focuscolor[]            = {0.98, 0.59, 0.12, 1.0};
 static const float fullscreen_bg[]         = {0.1,  0.1,  0.1,  1.0};
 
 /* tagging */
-static const char *tags[] = {
-	"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
-	"n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
-};
+int tagcount = 26;
 
 static const Rule rules[] = {
 	/* app_id  title  monitor  tags  isfloating  hfact  wfact  isterm  noswallow  scratchkey*/

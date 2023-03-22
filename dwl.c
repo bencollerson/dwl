@@ -491,7 +491,7 @@ applyrules(Client *c)
 			c->isterm     = r->isterm;
 			c->noswallow  = r->noswallow;
 			c->scratchkey = r->scratchkey;
-			newtags |= r->tags;
+			newtags      |= r->tags;
 			i = 0;
 			wl_list_for_each(m, &mons, link)
 				if (r->monitor == i++)
@@ -508,6 +508,10 @@ applyrules(Client *c)
 		}
 		c->geom.x = (mon->w.width - c->geom.width) * floatplacement.x + mon->m.x;
 		c->geom.y = (mon->w.height - c->geom.height) * floatplacement.y + mon->m.y;
+	}
+
+	if (c->scratchkey) {
+		newtags = mon->tagset[mon->seltags];
 	}
 
 	wlr_scene_node_reparent(&c->scene->node, layers[c->isfloating ? LyrFloat : LyrTile]);

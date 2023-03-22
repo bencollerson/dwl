@@ -24,7 +24,7 @@ static const char *tags[] = {
 static const Rule rules[] = {
 	/* app_id  title  monitor  tags  isfloating  hfact  wfact  isterm  noswallow  scratchkey*/
 	{ "org.keepassxc.KeePassXC",
-		   NULL,  -1,      0,    1,          0.4,   0.4,   0,      0,         'k' },
+		   NULL,  -1,      0,    1,          0.4,   0.4,   0,      0,        'k' },
 	{ "foot",  NULL,  -1,      0,    0,          0,     0,     1,      0,         0   },
 	{ "udiskie",
 		   NULL,  -1,      0,    1,          0.4,   0.4,   0,      0,         0 },

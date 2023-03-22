@@ -125,7 +125,7 @@ struct Client{
 #endif
 	unsigned int bw;
 	uint32_t tags;
-	int isfloating, iscentered, isurgent, isfullscreen, isterm, noswallow;
+	int isfloating, isurgent, isfullscreen, isterm, noswallow;
 	float hfact, wfact;
 	uint32_t resize; /* configure serial of a pending resize */
 	char scratchkey;
@@ -214,7 +214,6 @@ typedef struct {
 	const char *title;
 	int monitor;
 	int isfloating;
-	int iscentered;
 	float hfact;
 	float wfact;
 	int isterm;
@@ -483,7 +482,6 @@ applyrules(Client *c)
 		if ((!r->title || strstr(title, r->title))
 				&& (!r->id || strstr(appid, r->id))) {
 			c->isfloating = r->isfloating;
-			c->iscentered = r->iscentered;
 			c->hfact      = r->hfact;
 			c->wfact      = r->wfact;
 			c->isterm     = r->isterm;
@@ -504,10 +502,8 @@ applyrules(Client *c)
 		if (c->wfact > 0 && c->wfact <= 1) {
 			c->geom.width = mon->w.width * c->wfact;
 		}
-		if (c->iscentered) {
-			c->geom.x = (mon->w.width - c->geom.width) / 2 + mon->m.x;
-			c->geom.y = (mon->w.height - c->geom.height) / 2 + mon->m.y;
-		}
+		c->geom.x = (mon->w.width - c->geom.width) * floatplacement[0] + mon->m.x;
+		c->geom.y = (mon->w.height - c->geom.height) * floatplacement[1] + mon->m.y;
 	}
 
 	wlr_scene_node_reparent(&c->scene->node, layers[c->isfloating ? LyrFloat : LyrTile]);
@@ -780,8 +776,8 @@ closemon(Monitor *m)
 		if (c->mon == m) {
 			setmon(c, selmon, c->tags);
 			if (c->scratchkey) {
-				c->geom.x = (c->mon->w.width - c->geom.width) / 2 + c->mon->m.x;
-				c->geom.y = (c->mon->w.height - c->geom.height) / 2 + c->mon->m.y;
+				c->geom.x = (c->mon->w.width - c->geom.width) * floatplacement[0] + c->mon->m.x;
+				c->geom.y = (c->mon->w.height - c->geom.height) * floatplacement[1] + c->mon->m.y;
 				resize(c, c->geom, 0, 1);
 			}
 		}
@@ -2730,8 +2726,8 @@ togglescratch(const Arg *arg)
 			c->tags = selmon->tagset[selmon->seltags];
 			attachclients(selmon);
 			if (c->isfloating && new_monitor) {
-				c->geom.x = (selmon->w.width - c->geom.width) / 2 + selmon->m.x;
-				c->geom.y = (selmon->w.height - c->geom.height) / 2 + selmon->m.y;
+				c->geom.x = (selmon->w.width - c->geom.width) * floatplacement[0] + selmon->m.x;
+				c->geom.y = (selmon->w.height - c->geom.height) * floatplacement[1] + selmon->m.y;
 				resize(c, c->geom, 0, 1);
 			}
 			focusclient(c->tags == 0 ? focustop(selmon) : c, 1);
@@ -2942,8 +2938,8 @@ updatemons(struct wl_listener *listener, void *data)
 			if (!c->mon && client_is_mapped(c)) {
 				setmon(c, selmon, c->tags);
 				if (c->scratchkey && c->isfloating) {
-					c->geom.x = (selmon->w.width - c->geom.width) / 2 + selmon->m.x;
-					c->geom.y = (selmon->w.height - c->geom.height) / 2 + selmon->m.y;
+					c->geom.x = (selmon->w.width - c->geom.width) * floatplacement[0] + selmon->m.x;
+					c->geom.y = (selmon->w.height - c->geom.height) * floatplacement[1] + selmon->m.y;
 					resize(c, c->geom, 0, 1);
 				}
 			}

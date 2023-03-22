@@ -8,6 +8,7 @@ static const int bypass_surface_visibility = 0;  /* 1 means idle inhibitors will
 static const unsigned int borderpx         = 1;  /* border pixel of windows */
 static const int lockfullscreen            = 1;  /* 1 will force focus on the fullscreen window */
 static const int smartborders              = 1;
+static const float floatplacement[]        = {0.95, 0.93};  /* horizontal, vertical positions */
 static const float bordercolor[]           = {0.13, 0.13, 0.13, 1.0};
 static const float focuscolor[]            = {0.98, 0.59, 0.12, 1.0};
 /* To conform the xdg-protocol, set the alpha to zero to restore the old behavior */
@@ -20,12 +21,12 @@ static const char *tags[] = {
 };
 
 static const Rule rules[] = {
-	/* app_id  title  monitor  tags  isfloating  iscentered  hfact  wfact  isterm  noswallow  scratchkey*/
+	/* app_id  title  monitor  tags  isfloating  hfact  wfact  isterm  noswallow  scratchkey*/
 	{ "org.keepassxc.KeePassXC",
-		   NULL,  -1,      0,    1,          1,          0.4,   0.4,   0,      0,         'k' },
-	{ "foot",  NULL,  -1,      0,    0,          0,          0,     0,     1,      0,         0   },
+		   NULL,  -1,      0,    1,          0.4,   0.4,   0,      0,         'k' },
+	{ "foot",  NULL,  -1,      0,    0,          0,     0,     1,      0,         0   },
 	{ "udiskie",
-		   NULL,  -1,      0,    1,          1,          0.4,   0.4,   0,      0,         0 },
+		   NULL,  -1,      0,    1,          0.4,   0.4,   0,      0,         0 },
 };
 
 /* layout(s) */

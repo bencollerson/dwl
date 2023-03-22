@@ -210,6 +210,10 @@ typedef struct {
 } MonitorRule;
 
 typedef struct {
+	float x, y;
+} Placement;
+
+typedef struct {
 	const char *id;
 	const char *title;
 	int monitor;
@@ -502,8 +506,8 @@ applyrules(Client *c)
 		if (c->wfact > 0 && c->wfact <= 1) {
 			c->geom.width = mon->w.width * c->wfact;
 		}
-		c->geom.x = (mon->w.width - c->geom.width) * floatplacement[0] + mon->m.x;
-		c->geom.y = (mon->w.height - c->geom.height) * floatplacement[1] + mon->m.y;
+		c->geom.x = (mon->w.width - c->geom.width) * floatplacement.x + mon->m.x;
+		c->geom.y = (mon->w.height - c->geom.height) * floatplacement.y + mon->m.y;
 	}
 
 	wlr_scene_node_reparent(&c->scene->node, layers[c->isfloating ? LyrFloat : LyrTile]);
@@ -776,8 +780,8 @@ closemon(Monitor *m)
 		if (c->mon == m) {
 			setmon(c, selmon, c->tags);
 			if (c->scratchkey) {
-				c->geom.x = (c->mon->w.width - c->geom.width) * floatplacement[0] + c->mon->m.x;
-				c->geom.y = (c->mon->w.height - c->geom.height) * floatplacement[1] + c->mon->m.y;
+				c->geom.x = (c->mon->w.width - c->geom.width) * floatplacement.x + c->mon->m.x;
+				c->geom.y = (c->mon->w.height - c->geom.height) * floatplacement.y + c->mon->m.y;
 				resize(c, c->geom, 0, 1);
 			}
 		}
@@ -2726,8 +2730,8 @@ togglescratch(const Arg *arg)
 			c->tags = selmon->tagset[selmon->seltags];
 			attachclients(selmon);
 			if (c->isfloating && new_monitor) {
-				c->geom.x = (selmon->w.width - c->geom.width) * floatplacement[0] + selmon->m.x;
-				c->geom.y = (selmon->w.height - c->geom.height) * floatplacement[1] + selmon->m.y;
+				c->geom.x = (selmon->w.width - c->geom.width) * floatplacement.x + selmon->m.x;
+				c->geom.y = (selmon->w.height - c->geom.height) * floatplacement.y + selmon->m.y;
 				resize(c, c->geom, 0, 1);
 			}
 			focusclient(c->tags == 0 ? focustop(selmon) : c, 1);
@@ -2938,8 +2942,8 @@ updatemons(struct wl_listener *listener, void *data)
 			if (!c->mon && client_is_mapped(c)) {
 				setmon(c, selmon, c->tags);
 				if (c->scratchkey && c->isfloating) {
-					c->geom.x = (selmon->w.width - c->geom.width) * floatplacement[0] + selmon->m.x;
-					c->geom.y = (selmon->w.height - c->geom.height) * floatplacement[1] + selmon->m.y;
+					c->geom.x = (selmon->w.width - c->geom.width) * floatplacement.x + selmon->m.x;
+					c->geom.y = (selmon->w.height - c->geom.height) * floatplacement.y + selmon->m.y;
 					resize(c, c->geom, 0, 1);
 				}
 			}
@@ -3035,8 +3039,8 @@ warpcursor(const Client *c) {
 	if (!c && selmon) {
 		wlr_cursor_warp_closest(cursor,
 			  NULL,
-			  selmon->w.x + selmon->w.width * warpplacement[0],
-			  selmon->w.y + selmon->w.height * warpplacement[1]);
+			  selmon->w.x + selmon->w.width * warpplacement.x,
+			  selmon->w.y + selmon->w.height * warpplacement.y);
 	}
 	else if ( c && (cursor->x < c->geom.x ||
 		cursor->x > c->geom.x + c->geom.width ||
@@ -3044,8 +3048,8 @@ warpcursor(const Client *c) {
 		cursor->y > c->geom.y + c->geom.height))
 		wlr_cursor_warp_closest(cursor,
 			  NULL,
-			  c->geom.x + c->geom.width * warpplacement[0],
-			  c->geom.y + c->geom.height * warpplacement[1]);
+			  c->geom.x + c->geom.width * warpplacement.x,
+			  c->geom.y + c->geom.height * warpplacement.y);
 	handlecursoractivity(false);
 }
 

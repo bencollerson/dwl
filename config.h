@@ -15,12 +15,18 @@ static const int bypass_surface_visibility = 0;  /* 1 means idle inhibitors will
 static const unsigned int borderpx         = 1;  /* border pixel of windows */
 static const int lockfullscreen            = 1;  /* 1 will force focus on the fullscreen window */
 static const int smartborders              = 1;
+
 static const Placement floatplacement      = {0.95, 0.80};  /* horizontal, vertical positions */
 static const Placement warpplacement       = {0.47, 0.5};   /* horizontal, vertical positions */
-static const float bordercolor[]           = RGB(0x222222);
-static const float focuscolor[]            = RGB(0xfd971f);
+
+static const float backgrey[]              = RGB(0x222222);
+static const float focusyellow[]           = RGB(0xfd971f);
+static const float black[]                 = RGB(0x000000);
+
+static const float *bordercolor            = backgrey;
+static const float *focuscolor             = focusyellow;
 /* To conform the xdg-protocol, set the alpha to zero to restore the old behavior */
-static const float fullscreen_bg[]         = RGB(0x000000);
+static const float *fullscreen_bg          = black;
 
 /* tagging - tagcount should be no greater than 31 */
 int tagcount = 26;
@@ -29,7 +35,7 @@ static const Rule rules[] = {
 	/* app_id  title  monitor  tags  isfloating  hfact  wfact  isterm  noswallow  scratchkey*/
 	{ "org.keepassxc.KeePassXC",
 		   NULL,  -1,      0,    1,          0.4,   0.4,   0,      0,        'k' },
-	{ "foot",  NULL,  -1,      0,    0,          0,     0,     1,      0,         0   },
+	{ "foot",  NULL,  -1,      0,    0,          0,     0,     1,      0,         0  },
 	{ "udiskie",
 		   NULL,  -1,      0,    1,          0.4,   0.4,   0,      0,         0 },
 };

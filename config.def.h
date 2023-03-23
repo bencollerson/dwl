@@ -1,11 +1,29 @@
+#define RGBA(col) { \
+	((col & 0xff000000) >> 24) / 255.0, \
+	((col & 0xff0000) >> 16) / 255.0, \
+	((col & 0xff00) >> 8) / 255.0, \
+	((col & 0xff)) / 255.0 \
+}
+
+#define RGB(col) { \
+	((col & 0xff0000) >> 16) / 255.0, \
+	((col & 0xff00) >> 8) / 255.0, \
+	((col & 0xff)) / 255.0, \
+	1.0 \
+}
+
+/* examples */
+static const float monokaiorange[]         = RGB(0xe87d3e);
+static const float monokaipurplet[]        = RGBA(0x9e86c87f);
+
 /* appearance */
 static const int sloppyfocus               = 1;  /* focus follows mouse */
 static const int bypass_surface_visibility = 0;  /* 1 means idle inhibitors will disable idle tracking even if it's surface isn't visible  */
 static const unsigned int borderpx         = 1;  /* border pixel of windows */
-static const float bordercolor[]           = {0.5, 0.5, 0.5, 1.0};
-static const float focuscolor[]            = {1.0, 0.0, 0.0, 1.0};
+static const float *bordercolor            = monokaipurplet;
+static const float *focuscolor             = monokaiorange;
 /* To conform the xdg-protocol, set the alpha to zero to restore the old behavior */
-static const float fullscreen_bg[]         = {0.1, 0.1, 0.1, 1.0};
+static const float fullscreen_bg[]         = RGB(0x202020);
 
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };

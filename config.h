@@ -2,6 +2,13 @@
 #define TERMINAL "x-terminal-emulator"
 #define BROWSER "qutebrowser"
 
+#define RGB(col) { \
+	((col & 0xff0000) >> 16) / 255.0, \
+	((col & 0xff00) >> 8) / 255.0, \
+	((col & 0xff)) / 255.0, \
+	1.0 \
+}
+
 /* appearance */
 static const int sloppyfocus               = 1;  /* focus follows mouse */
 static const int bypass_surface_visibility = 0;  /* 1 means idle inhibitors will disable idle tracking even if it's surface isn't visible  */
@@ -10,10 +17,10 @@ static const int lockfullscreen            = 1;  /* 1 will force focus on the fu
 static const int smartborders              = 1;
 static const Placement floatplacement      = {0.95, 0.80};  /* horizontal, vertical positions */
 static const Placement warpplacement       = {0.47, 0.5};   /* horizontal, vertical positions */
-static const float bordercolor[]           = {0.13, 0.13, 0.13, 1.0};
-static const float focuscolor[]            = {0.98, 0.59, 0.12, 1.0};
+static const float bordercolor[]           = RGB(0x222222);
+static const float focuscolor[]            = RGB(0xfd971f);
 /* To conform the xdg-protocol, set the alpha to zero to restore the old behavior */
-static const float fullscreen_bg[]         = {0.1,  0.1,  0.1,  1.0};
+static const float fullscreen_bg[]         = RGB(0x000000);
 
 /* tagging - tagcount should be no greater than 31 */
 int tagcount = 26;

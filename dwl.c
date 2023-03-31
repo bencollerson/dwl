@@ -271,6 +271,7 @@ static void destroynotify(struct wl_listener *listener, void *data);
 static void destroysessionlock(struct wl_listener *listener, void *data);
 static void destroysessionmgr(struct wl_listener *listener, void *data);
 static Monitor *dirtomon(enum wlr_direction dir);
+static void floatpos(Client *c, Monitor *m);
 static void focusclient(Client *c, int lift);
 static void focusmon(const Arg *arg);
 static void focusstack(const Arg *arg);
@@ -500,14 +501,7 @@ applyrules(Client *c)
 	}
 
 	if (c->isfloating) {
-		if (c->hfact > 0 && c->hfact <= 1) {
-			c->geom.height = mon->w.height * c->hfact;
-		}
-		if (c->wfact > 0 && c->wfact <= 1) {
-			c->geom.width = mon->w.width * c->wfact;
-		}
-		c->geom.x = (mon->w.width - c->geom.width) * floatplacement.x + mon->m.x;
-		c->geom.y = (mon->w.height - c->geom.height) * floatplacement.y + mon->m.y;
+		floatpos(c, mon);
 	}
 
 	if (c->scratchkey) {
@@ -784,8 +778,7 @@ closemon(Monitor *m)
 		if (c->mon == m) {
 			setmon(c, selmon, c->tags);
 			if (c->scratchkey) {
-				c->geom.x = (c->mon->w.width - c->geom.width) * floatplacement.x + c->mon->m.x;
-				c->geom.y = (c->mon->w.height - c->geom.height) * floatplacement.y + c->mon->m.y;
+				floatpos(c, c->mon);
 				resize(c, c->geom, 0, 1);
 			}
 		}
@@ -793,6 +786,7 @@ closemon(Monitor *m)
 	focusclient(focustop(selmon), 1);
 	printstatus();
 }
+
 
 void
 col(Monitor *m)
@@ -1292,6 +1286,19 @@ dirtomon(enum wlr_direction dir)
 }
 
 void
+floatpos(Client *c, Monitor *m)
+{
+	if (c->hfact > 0 && c->hfact <= 1) {
+		c->geom.height = m->w.height * c->hfact;
+	}
+	if (c->wfact > 0 && c->wfact <= 1) {
+		c->geom.width = m->w.width * c->wfact;
+	}
+	c->geom.x = (m->w.width / 2) + (((m->w.width / 2) - c->geom.width) / 2) + m->m.x;
+	c->geom.y = (m->w.height / 2) + (((m->w.height / 2) - c->geom.height) / 2) + m->m.y;
+}
+
+void
 focusclient(Client *c, int lift)
 {
 	struct wlr_surface *old = seat->keyboard_state.focused_surface;
@@ -1382,27 +1389,6 @@ focusmon(const Arg *arg)
 }
 
 void
-handlecursoractivity(bool restore_focus)
-{
-	wl_event_source_timer_update(hide_source, cursor_timeout * 1000);
-	if (cursor_hidden) {
-		wlr_xcursor_manager_set_cursor_image(cursor_mgr, "left_ptr", cursor);
-		cursor_hidden = false;
-		if (restore_focus)
-			motionnotify(0);
-	}
-}
-
-int
-hidecursor(void *data)
-{
-	wlr_cursor_set_image(cursor, NULL, 0, 0, 0, 0, 0, 0);
-	wlr_seat_pointer_notify_clear_focus(seat);
-	cursor_hidden = true;
-	return 1;
-}
-
-void
 focusstack(const Arg *arg)
 {
 	/* Focus the next or previous client (in tiling order) on selmon */
@@ -1481,6 +1467,27 @@ getunusedtag(void)
 		}
 	}
 	return i;
+}
+
+void
+handlecursoractivity(bool restore_focus)
+{
+	wl_event_source_timer_update(hide_source, cursor_timeout * 1000);
+	if (cursor_hidden) {
+		wlr_xcursor_manager_set_cursor_image(cursor_mgr, "left_ptr", cursor);
+		cursor_hidden = false;
+		if (restore_focus)
+			motionnotify(0);
+	}
+}
+
+int
+hidecursor(void *data)
+{
+	wlr_cursor_set_image(cursor, NULL, 0, 0, 0, 0, 0, 0);
+	wlr_seat_pointer_notify_clear_focus(seat);
+	cursor_hidden = true;
+	return 1;
 }
 
 void
@@ -1758,17 +1765,16 @@ mapnotify(struct wl_listener *listener, void *data)
 		wl_list_insert(&clients, &c->link);
 	wl_list_insert(&fstack, &c->flink);
 
+
 	/* Set initial monitor, tags, floating status, and focus:
 	 * we always consider floating, clients that have parent and thus
 	 * we set the same tags and monitor than its parent, if not
 	 * try to apply rules for them */
 	 /* TODO: https://github.com/djpohly/dwl/pull/334#issuecomment-1330166324 */
+	applyrules(c);
 	if (c->type == XDGShell && (p = client_get_parent(c))) {
 		c->isfloating = 1;
-		wlr_scene_node_reparent(&c->scene->node, layers[LyrFloat]);
 		setmon(c, p->mon, p->tags);
-	} else {
-		applyrules(c);
 	}
 	printstatus();
 
@@ -2727,14 +2733,14 @@ togglescratch(const Arg *arg)
 			attachclients(m_client);
 			arrange(m_client);
 			focusclient(focustop(m_selected), 1);
+
 		}
 		else {
 			new_monitor = (c->mon != selmon);
 			c->tags = selmon->tagset[selmon->seltags];
 			attachclients(selmon);
 			if (c->isfloating && new_monitor) {
-				c->geom.x = (selmon->w.width - c->geom.width) * floatplacement.x + selmon->m.x;
-				c->geom.y = (selmon->w.height - c->geom.height) * floatplacement.y + selmon->m.y;
+				floatpos(c, selmon);
 				resize(c, c->geom, 0, 1);
 			}
 			focusclient(c->tags == 0 ? focustop(selmon) : c, 1);
@@ -2945,8 +2951,7 @@ updatemons(struct wl_listener *listener, void *data)
 			if (!c->mon && client_is_mapped(c)) {
 				setmon(c, selmon, c->tags);
 				if (c->scratchkey && c->isfloating) {
-					c->geom.x = (selmon->w.width - c->geom.width) * floatplacement.x + selmon->m.x;
-					c->geom.y = (selmon->w.height - c->geom.height) * floatplacement.y + selmon->m.y;
+					floatpos(c, selmon);
 					resize(c, c->geom, 0, 1);
 				}
 			}

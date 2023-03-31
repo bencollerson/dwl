@@ -16,7 +16,6 @@ static const unsigned int borderpx         = 1;  /* border pixel of windows */
 static const int lockfullscreen            = 1;  /* 1 will force focus on the fullscreen window */
 static const int smartborders              = 1;
 
-static const Placement floatplacement      = {0.95, 0.80};  /* horizontal, vertical positions */
 static const Placement warpplacement       = {0.47, 0.5};   /* horizontal, vertical positions */
 
 static const float backgrey[]              = RGB(0x222222);
@@ -34,7 +33,7 @@ int tagcount = 26;
 static const Rule rules[] = {
 	/* app_id  title  monitor  tags  isfloating  hfact  wfact  isterm  noswallow  scratchkey*/
 	{ "org.keepassxc.KeePassXC",
-		   NULL,  -1,      0,    1,          0.4,   0.4,   0,      0,        'k' },
+		   NULL,  -1,      0,    1,          0.45,  0.4,   0,      0,        'k' },
 	{ "foot",  NULL,  -1,      0,    0,          0,     0,     1,      0,         0  },
 	{ "udiskie",
 		   NULL,  -1,      0,    1,          0.4,   0.4,   0,      0,         0 },

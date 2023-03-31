@@ -1,12 +1,6 @@
 #!/bin/sh
 
-# Sure would be nice if every app supported XF86Copy, XF86Paste, and XF86Cut
-# in the mean time, there's this hacky script
-
-# use your global keybinding system to
-# bind `dwl-keys copy`  to Super+C
-# bind `dwl-keys paste` to Super+V
-# bind `dwl-keys cut`   to Super+X
+# various commands to simulate keystrokes
 
 copy() {
 	appid="$1"
@@ -79,6 +73,18 @@ deleteword() {
 	esac
 }
 
+view() {
+	tag="$1"
+
+	wtype -M win r -m win "$tag"
+}
+
+tag() {
+	tag="$1"
+
+	wtype -M win e -m win "$tag"
+}
+
 command="$1"
 case "$command" in
 	copy | paste | cut | deleteword )
@@ -86,8 +92,26 @@ case "$command" in
 		$command "$appid"
 		;;
 
+	tag | view )
+		$command "$2"
+		;;
+
 	*)
-		echo "usage: $0 (copy|paste|cut|deleteword)"
+		cat <<'EOM'
+usage:
+
+Add key bindings for the following commands:
+
+	bind `dwl-keys copy`  to Super+C
+	bind `dwl-keys paste` to Super+V
+	bind `dwl-keys cut`   to Super+X
+
+Status bar tag clicks can be bound to these commands:
+
+	`dwl-keys view <tagname>`
+	`dwl-keys tag <tagname>`
+
+EOM
 		exit 1
 		;;
 esac

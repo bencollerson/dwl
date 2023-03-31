@@ -16,6 +16,7 @@ static const unsigned int borderpx         = 1;  /* border pixel of windows */
 static const int lockfullscreen            = 1;  /* 1 will force focus on the fullscreen window */
 static const int smartborders              = 1;
 
+static const Placement floatplacement      = {0.75, 0.75};  /* horizontal, vertical positions */
 static const Placement warpplacement       = {0.47, 0.5};   /* horizontal, vertical positions */
 
 static const float backgrey[]              = RGB(0x222222);

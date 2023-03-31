@@ -1294,8 +1294,8 @@ floatpos(Client *c, Monitor *m)
 	if (c->wfact > 0 && c->wfact <= 1) {
 		c->geom.width = m->w.width * c->wfact;
 	}
-	c->geom.x = (m->w.width / 2) + (((m->w.width / 2) - c->geom.width) / 2) + m->m.x;
-	c->geom.y = (m->w.height / 2) + (((m->w.height / 2) - c->geom.height) / 2) + m->m.y;
+	c->geom.x = (m->w.width * floatplacement.x) - (c->geom.width / 2) + m->m.x;
+	c->geom.y = (m->w.height * floatplacement.y) - (c->geom.height / 2) + m->m.y;
 }
 
 void

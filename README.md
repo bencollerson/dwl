@@ -1,3 +1,22 @@
+# forked version of dwl
+
+## extra dependencies
+
+* wtype
+
+```
+apt install wtype
+```
+
+## Notable patches
+
+* chainkeys
+* clipboard manager support
+* uniform copy and paste keybinding
+* single tagset
+* columns layout
+* hex colour support
+
 # dwl - dwm for Wayland
 
 Join us on our [Discord server] or at [#dwl] on irc.libera.chat.

@@ -1,6 +1,29 @@
 #!/bin/sh
 
-# various commands to simulate keystrokes
+
+usage() {
+	cat <<'EOM'
+dwl-keys
+
+script to generate key strokes
+
+usage:
+
+Add key bindings for the following commands:
+
+	bind `dwl-keys copy`       to Super+C
+	bind `dwl-keys paste`      to Super+V
+	bind `dwl-keys cut`        to Super+X
+	bind `dwl-keys deleteword` to Super+Backspace
+
+Status bar tag clicks can be bound to these commands:
+
+	`dwl-keys view <tagname>`
+	`dwl-keys tag <tagname>`
+
+EOM
+	exit 1
+}
 
 copy() {
 	appid="$1"
@@ -97,21 +120,6 @@ case "$command" in
 		;;
 
 	*)
-		cat <<'EOM'
-usage:
-
-Add key bindings for the following commands:
-
-	bind `dwl-keys copy`  to Super+C
-	bind `dwl-keys paste` to Super+V
-	bind `dwl-keys cut`   to Super+X
-
-Status bar tag clicks can be bound to these commands:
-
-	`dwl-keys view <tagname>`
-	`dwl-keys tag <tagname>`
-
-EOM
-		exit 1
+		usage
 		;;
 esac

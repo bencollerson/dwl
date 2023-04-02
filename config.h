@@ -29,7 +29,7 @@ static const float *focuscolor             = focusyellow;
 static const float *fullscreen_bg          = black;
 
 /* tagging - tagcount should be no greater than 31 */
-int tagcount = 26;
+static const int tagcount = 26;
 
 static const Rule rules[] = {
 	/* app_id  title  monitor  tags  isfloating  hfact  wfact  isterm  noswallow  scratchkey*/
@@ -177,11 +177,13 @@ static const Key keys[] = {
 	{ MODKEY,                    -1,   XKB_KEY_b,                spawn,            SPAWN("clipboard-menu") },
 	{ MODKEY,                    -1,   XKB_KEY_a,                spawn,            SPAWN("dunstctl", "close-all") },
 
+	/* uniform keybinding magic */
 	{ MODKEY,                    -1,   XKB_KEY_c,                spawn,            SPAWN("dwl-keys", "copy") },
 	{ MODKEY,                    -1,   XKB_KEY_v,                spawn,            SPAWN("dwl-keys", "paste") },
 	{ MODKEY,                    -1,   XKB_KEY_x,                spawn,            SPAWN("dwl-keys", "cut") },
 	{ MODKEY,                    -1,   XKB_KEY_BackSpace,        spawn,            SPAWN("dwl-keys", "deleteword") },
 
+	/* media */
 	{ MODKEY,                    -1,   XKB_KEY_p,                spawn,            SPAWN("media-command", "playpause") },
 	{ 0,                         -1,   XF86XK_AudioPlay,         spawn,            SPAWN("media-command", "playpause") },
 	{ MODKEY,                    -1,   XKB_KEY_bracketleft,      spawn,            SPAWN("media-command", "prev") },
@@ -200,19 +202,11 @@ static const Key keys[] = {
 	{ 0,                         -1,   XF86XK_MonBrightnessUp,   spawn,            SPAWN("brighten", "up") },
 	{ 0,                         -1,   XF86XK_MonBrightnessDown, spawn,            SPAWN("brighten", "down") },
 
-	/* defines */
-	TAGKEYS(XKB_KEY_a), TAGKEYS(XKB_KEY_b),
-	TAGKEYS(XKB_KEY_c), TAGKEYS(XKB_KEY_d),
-	TAGKEYS(XKB_KEY_e), TAGKEYS(XKB_KEY_f),
-	TAGKEYS(XKB_KEY_g), TAGKEYS(XKB_KEY_h),
-	TAGKEYS(XKB_KEY_i), TAGKEYS(XKB_KEY_j),
-	TAGKEYS(XKB_KEY_k), TAGKEYS(XKB_KEY_l),
-	TAGKEYS(XKB_KEY_m), TAGKEYS(XKB_KEY_n),
-	TAGKEYS(XKB_KEY_o), TAGKEYS(XKB_KEY_p),
-	TAGKEYS(XKB_KEY_q), TAGKEYS(XKB_KEY_r),
-	TAGKEYS(XKB_KEY_s), TAGKEYS(XKB_KEY_t),
-	TAGKEYS(XKB_KEY_u), TAGKEYS(XKB_KEY_v),
-	TAGKEYS(XKB_KEY_w), TAGKEYS(XKB_KEY_x),
+	/* tags */
+	TAGKEYS(XKB_KEY_a), TAGKEYS(XKB_KEY_b), TAGKEYS(XKB_KEY_c), TAGKEYS(XKB_KEY_d), TAGKEYS(XKB_KEY_e), TAGKEYS(XKB_KEY_f),
+	TAGKEYS(XKB_KEY_g), TAGKEYS(XKB_KEY_h), TAGKEYS(XKB_KEY_i), TAGKEYS(XKB_KEY_j), TAGKEYS(XKB_KEY_k), TAGKEYS(XKB_KEY_l),
+	TAGKEYS(XKB_KEY_m), TAGKEYS(XKB_KEY_n), TAGKEYS(XKB_KEY_o), TAGKEYS(XKB_KEY_p), TAGKEYS(XKB_KEY_q), TAGKEYS(XKB_KEY_r),
+	TAGKEYS(XKB_KEY_s), TAGKEYS(XKB_KEY_t), TAGKEYS(XKB_KEY_u), TAGKEYS(XKB_KEY_v), TAGKEYS(XKB_KEY_w), TAGKEYS(XKB_KEY_x),
 	TAGKEYS(XKB_KEY_y), TAGKEYS(XKB_KEY_z),
 
 	/* virtual terminals */
@@ -221,6 +215,5 @@ static const Key keys[] = {
 
 static const Button buttons[] = {
 	{ MODKEY, BTN_LEFT,   moveresize,     {.ui = CurMove} },
-	{ MODKEY, BTN_MIDDLE, togglefloating, {0} },
 	{ MODKEY, BTN_RIGHT,  moveresize,     {.ui = CurResize} },
 };

@@ -2714,8 +2714,8 @@ tile(Monitor *m)
 void
 togglescratch(const Arg *arg)
 {
-	Client *c;
-	Monitor *m_client, *m_selected;
+	Client *c, *w;
+	Monitor *m_client, *m_selected, *m;
 	unsigned int found = 0, new_monitor;
 
 	/* search for first window that matches the scratchkey */
@@ -2733,7 +2733,6 @@ togglescratch(const Arg *arg)
 			attachclients(m_client);
 			arrange(m_client);
 			focusclient(focustop(m_selected), 1);
-
 		}
 		else {
 			new_monitor = (c->mon != selmon);
@@ -2749,6 +2748,11 @@ togglescratch(const Arg *arg)
 	} else{
 		spawnscratch(arg);
 	}
+
+	m = c->mon ? c->mon : xytomon(c->geom.x, c->geom.y);
+	wl_list_for_each(w, &clients, link)
+		if (w != c && w->isfullscreen && m == w->mon && (w->tags & c->tags))
+			setfullscreen(w, 0);
 }
 
 void

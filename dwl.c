@@ -217,6 +217,7 @@ typedef struct {
 	const char *id;
 	const char *title;
 	int monitor;
+	uint32_t tags;
 	int isfloating;
 	float hfact;
 	float wfact;

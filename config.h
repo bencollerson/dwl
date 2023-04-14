@@ -38,6 +38,8 @@ static const Rule rules[] = {
 	{ "foot",  NULL,  -1,      0,    0,          0,     0,     1,      0,         0  },
 	{ "udiskie",
 		   NULL,  -1,      0,    1,          0.4,   0.4,   0,      0,         0 },
+	{ "net.sourceforge.xaos.xaos",
+		   NULL,  -1,      0,    0,          0.4,   0.4,   0,      0,         0 },
 };
 
 /* layout(s) */

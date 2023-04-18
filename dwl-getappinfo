@@ -2,9 +2,10 @@
 
 use Modern::Perl;
 
-my $titlefile = "$ENV{XDG_RUNTIME_DIR}/dwl-title";
-my $appidfile = "$ENV{XDG_RUNTIME_DIR}/dwl-appid";
-my $ctypefile = "$ENV{XDG_RUNTIME_DIR}/dwl-ctype";
+my $datadir = "$ENV{XDG_RUNTIME_DIR}/dwl";
+my $titlefile = "$datadir/title";
+my $appidfile = "$datadir/appid";
+my $ctypefile = "$datadir/ctype";
 
 my $titles = {};
 my $appids = {};
@@ -27,6 +28,7 @@ sub initfile {
 	chmod(0600, $file);
 }
 
+mkdir($datadir);
 initfile($titlefile);
 initfile($appidfile);
 initfile($ctypefile);

@@ -111,7 +111,7 @@ tag() {
 command="$1"
 case "$command" in
 	copy | paste | cut | deleteword )
-		read -r appid < $XDG_RUNTIME_DIR/dwl-appid
+		read -r appid < $XDG_RUNTIME_DIR/dwl/appid
 		$command "$appid"
 		;;
 

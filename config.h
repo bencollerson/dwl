@@ -154,8 +154,6 @@ static const Key keys[] = {
 	{ MODKEY,                    -1,    XKB_KEY_space,           zoom,             {0} },
 	{ MODKEY,                    -1,    XKB_KEY_Tab,             view,             {0} },
 	{ MODKEY,                    -1,    XKB_KEY_q,               killclient,       {0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, -1,    XKB_KEY_space,           togglefloating,   {0} },
-	{ MODKEY,                    -1,    XKB_KEY_f,               togglefullscreen, {0} },
 	{ MODKEY,                    -1,    XKB_KEY_m,               focusmon,         {.i = +1 } },
 	{ MODKEY,                    -1,    XKB_KEY_n,               tagmon,           {.i = +1 } },
 	{ MODKEY,                    -1,    XKB_KEY_o,               togglescratch,    {.v = scratchpadcmd } },
@@ -166,6 +164,8 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_t,    XKB_KEY_t,        setlayout,        {.v = &layouts[LAYOUT_TILE]} },
 	{ MODKEY,                    XKB_KEY_t,    XKB_KEY_f,        setlayout,        {.v = &layouts[LAYOUT_FLOAT]} },
 	{ MODKEY,                    XKB_KEY_t,    XKB_KEY_m,        setlayout,        {.v = &layouts[LAYOUT_MONOCLE]} },
+	{ MODKEY,                    XKB_KEY_t,    XKB_KEY_x,        togglefullscreen, {0} },
+	{ MODKEY,                    XKB_KEY_t,    XKB_KEY_o,        togglefloating,   {0} },
 
 	/* shortcuts */
 	{ MODKEY,                    -1,   XKB_KEY_z,                spawn,            SPAWN("wllock", "-f") },
@@ -217,5 +217,5 @@ static const Key keys[] = {
 
 static const Button buttons[] = {
 	{ MODKEY, BTN_LEFT,   moveresize,     {.ui = CurMove} },
-	{ MODKEY, BTN_RIGHT,  moveresize,     {.ui = CurResize} },
+	{ MODKEY, BTN_MIDDLE, moveresize,     {.ui = CurResize} },
 };

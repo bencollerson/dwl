@@ -49,6 +49,7 @@ static const Layout layouts[] = {
 	{ "|-",      tile },
 	{ "[]",      NULL },    /* no layout function means floating behavior */
 	{ "mo",      monocle },
+	{ "##",      gaplessgrid },
 };
 
 enum layout_types {
@@ -56,6 +57,7 @@ enum layout_types {
 	LAYOUT_TILE,
 	LAYOUT_FLOAT,
 	LAYOUT_MONOCLE,
+	LAYOUT_GAPLESSGRID,
 };
 
 /* monitors */
@@ -164,6 +166,7 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_t,    XKB_KEY_t,        setlayout,        {.v = &layouts[LAYOUT_TILE]} },
 	{ MODKEY,                    XKB_KEY_t,    XKB_KEY_f,        setlayout,        {.v = &layouts[LAYOUT_FLOAT]} },
 	{ MODKEY,                    XKB_KEY_t,    XKB_KEY_m,        setlayout,        {.v = &layouts[LAYOUT_MONOCLE]} },
+	{ MODKEY,                    XKB_KEY_t,    XKB_KEY_g,        setlayout,        {.v = &layouts[LAYOUT_GAPLESSGRID]} },
 	{ MODKEY,                    XKB_KEY_t,    XKB_KEY_x,        togglefullscreen, {0} },
 	{ MODKEY,                    XKB_KEY_t,    XKB_KEY_o,        togglefloating,   {0} },
 

@@ -44,7 +44,7 @@ static const Rule rules[] = {
 
 /* layout(s) */
 static const Layout layouts[] = {
-	/* symbol     arrange function */
+	/* symbol    arrange function */
 	{ "||",      col },
 	{ "|-",      tile },
 	{ "[]",      NULL },    /* no layout function means floating behavior */
@@ -128,8 +128,8 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 #define MODKEY WLR_MODIFIER_LOGO
 
 #define TAGKEYS(KEY) \
-	{ MODKEY,                    XKB_KEY_r, KEY,           view,            {.ui = 1 << (KEY - XKB_KEY_a)} }, \
-	{ MODKEY,                    XKB_KEY_e, KEY,           tag,             {.ui = 1 << (KEY - XKB_KEY_a)} }
+	{ MODKEY, XKB_KEY_r, XKB_KEY_##KEY, view, {.ui = 1 << (XKB_KEY_##KEY - XKB_KEY_a)} }, \
+	{ MODKEY, XKB_KEY_e, XKB_KEY_##KEY, tag,  {.ui = 1 << (XKB_KEY_##KEY - XKB_KEY_a)} }
 
 #define CHVT(n) { WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT, -1, XKB_KEY_XF86Switch_VT_##n, chvt, {.ui = (n)} }
 
@@ -208,11 +208,11 @@ static const Key keys[] = {
 	{ 0,                         -1,   XF86XK_MonBrightnessDown, spawn,            SPAWN("brighten", "down") },
 
 	/* tags */
-	TAGKEYS(XKB_KEY_a), TAGKEYS(XKB_KEY_b), TAGKEYS(XKB_KEY_c), TAGKEYS(XKB_KEY_d), TAGKEYS(XKB_KEY_e), TAGKEYS(XKB_KEY_f),
-	TAGKEYS(XKB_KEY_g), TAGKEYS(XKB_KEY_h), TAGKEYS(XKB_KEY_i), TAGKEYS(XKB_KEY_j), TAGKEYS(XKB_KEY_k), TAGKEYS(XKB_KEY_l),
-	TAGKEYS(XKB_KEY_m), TAGKEYS(XKB_KEY_n), TAGKEYS(XKB_KEY_o), TAGKEYS(XKB_KEY_p), TAGKEYS(XKB_KEY_q), TAGKEYS(XKB_KEY_r),
-	TAGKEYS(XKB_KEY_s), TAGKEYS(XKB_KEY_t), TAGKEYS(XKB_KEY_u), TAGKEYS(XKB_KEY_v), TAGKEYS(XKB_KEY_w), TAGKEYS(XKB_KEY_x),
-	TAGKEYS(XKB_KEY_y), TAGKEYS(XKB_KEY_z),
+	TAGKEYS(a), TAGKEYS(b), TAGKEYS(c), TAGKEYS(d), TAGKEYS(e), TAGKEYS(f),
+	TAGKEYS(g), TAGKEYS(h), TAGKEYS(i), TAGKEYS(j), TAGKEYS(k), TAGKEYS(l),
+	TAGKEYS(m), TAGKEYS(n), TAGKEYS(o), TAGKEYS(p), TAGKEYS(q), TAGKEYS(r),
+	TAGKEYS(s), TAGKEYS(t), TAGKEYS(u), TAGKEYS(v), TAGKEYS(w), TAGKEYS(x),
+	TAGKEYS(y), TAGKEYS(z),
 
 	/* virtual terminals */
 	CHVT(1), CHVT(2), CHVT(3), CHVT(4), CHVT(5), CHVT(6),

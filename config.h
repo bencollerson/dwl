@@ -159,6 +159,7 @@ static const Key keys[] = {
 	{ MODKEY,                    -1,    XKB_KEY_m,               focusmon,         {.i = +1 } },
 	{ MODKEY,                    -1,    XKB_KEY_n,               tagmon,           {.i = +1 } },
 	{ MODKEY,                    -1,    XKB_KEY_o,               togglescratch,    {.v = scratchpadcmd } },
+	{ MODKEY|WLR_MODIFIER_SHIFT, -1,    XKB_KEY_O,               spawn,            SPAWN("pmenu") },
 	{ MODKEY|WLR_MODIFIER_SHIFT, -1,    XKB_KEY_Q,               quit,             {0} },
 
 	/* layouts */

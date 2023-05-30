@@ -99,13 +99,13 @@ deleteword() {
 view() {
 	tag="$1"
 
-	wtype -M win r -m win "$tag"
+	echo "$tag" | grep -Eq '^[a-z]$' && wtype -M win r -m win "$tag"
 }
 
 tag() {
 	tag="$1"
 
-	wtype -M win e -m win "$tag"
+	echo "$tag" | grep -Eq '^[a-z]$' && wtype -M win e -m win "$tag"
 }
 
 command="$1"

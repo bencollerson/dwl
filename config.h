@@ -172,7 +172,7 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_t,    XKB_KEY_o,        togglefloating,   {0} },
 
 	/* shortcuts */
-	{ MODKEY,                    -1,   XKB_KEY_z,                spawn,            SPAWN("wllock", "-f") },
+	{ MODKEY,                    -1,   XKB_KEY_z,                spawn,            SPAWN("wllock", "-z") },
 	{ MODKEY|WLR_MODIFIER_SHIFT, -1,   XKB_KEY_Z,                spawn,            SPAWN("wllock", "-s") },
 	{ MODKEY,                    -1,   XKB_KEY_w,                spawn,            SPAWN(BROWSER) },
 	{ MODKEY|WLR_MODIFIER_SHIFT, -1,   XKB_KEY_W,                spawn,            SPAWN(TERMINAL, "-e", "nmtui") },

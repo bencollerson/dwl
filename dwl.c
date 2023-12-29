@@ -138,6 +138,7 @@ typedef struct {
 	uint32_t tags;
 	int isfloating, isurgent, isfullscreen;
 	char scratchkey;
+	int titleurgent;
 	uint32_t resize; /* configure serial of a pending resize */
 } Client;
 
@@ -228,6 +229,7 @@ typedef struct {
 	const char *title;
 	uint32_t tags;
 	int isfloating;
+	int titleurgent;
 	int monitor;
 	const char scratchkey;
 } Rule;
@@ -471,6 +473,7 @@ applyrules(Client *c)
 
 	c->isfloating = client_is_float_type(c);
 	c->scratchkey = 0;
+	c->titleurgent = 0;
 	if (!(appid = client_get_appid(c)))
 		appid = broken;
 	if (!(title = client_get_title(c)))
@@ -481,6 +484,7 @@ applyrules(Client *c)
 				&& (!r->id || strstr(appid, r->id))) {
 			c->isfloating = r->isfloating;
 			c->scratchkey = r->scratchkey;
+			c->titleurgent = r->titleurgent;
 			newtags |= r->tags;
 			i = 0;
 			wl_list_for_each(m, &mons, link) {
@@ -3084,6 +3088,10 @@ updatetitle(struct wl_listener *listener, void *data)
 	Client *c = wl_container_of(listener, c, set_title);
 	if (c == focustop(c->mon))
 		printstatus();
+	else if (c->titleurgent) {
+		c->isurgent = 1;
+		printstatus();
+	}
 }
 
 void

@@ -135,9 +135,12 @@ typedef struct {
 #endif
 	unsigned int bw;
 	uint32_t tags;
-	int isfloating, isurgent, isfullscreen;
-	char scratchkey;
+	int isfloating;
+	int isurgent;
+	int isfullscreen;
 	int titleurgent;
+	char scratchkey;
+	float hfact, wfact;
 	uint32_t resize; /* configure serial of a pending resize */
 } Client;
 
@@ -214,8 +217,14 @@ typedef struct {
 	float scale;
 	const Layout *lt;
 	enum wl_output_transform rr;
-	int x, y;
+	int x;
+	int y;
 } MonitorRule;
+
+typedef struct {
+	float x;
+	float y;
+} Placement;
 
 typedef struct {
 	struct wlr_pointer_constraint_v1 *constraint;
@@ -225,10 +234,12 @@ typedef struct {
 typedef struct {
 	const char *id;
 	const char *title;
+	int monitor;
 	uint32_t tags;
 	int isfloating;
+	float hfact;
+	float wfact;
 	int titleurgent;
-	int monitor;
 	const char scratchkey;
 } Rule;
 
@@ -284,6 +295,7 @@ static void destroypointerconstraint(struct wl_listener *listener, void *data);
 static void destroysessionlock(struct wl_listener *listener, void *data);
 static void destroysessionmgr(struct wl_listener *listener, void *data);
 static Monitor *dirtomon(enum wlr_direction dir);
+static void floatpos(Client *c, Monitor *m);
 static void focusclient(Client *c, int lift);
 static void focusmon(const Arg *arg);
 static void focusstack(const Arg *arg);
@@ -367,6 +379,7 @@ static void zoom(const Arg *arg);
 /* variables */
 static const char broken[] = "broken";
 static pid_t child_pid = -1;
+static bool cursor_hidden = false;
 static int locked;
 static void *exclusive_focus;
 static int chainkey = -1;
@@ -403,7 +416,6 @@ static struct wlr_pointer_constraint_v1 *active_constraint;
 static struct wlr_cursor *cursor;
 static struct wlr_xcursor_manager *cursor_mgr;
 static struct wl_event_source *hide_source;
-static bool cursor_hidden = false;
 
 static struct wlr_scene_rect *root_bg;
 static struct wlr_session_lock_manager_v1 *session_lock_mgr;
@@ -481,10 +493,12 @@ applyrules(Client *c)
 	for (r = rules; r < END(rules); r++) {
 		if ((!r->title || strstr(title, r->title))
 				&& (!r->id || strstr(appid, r->id))) {
-			c->isfloating = r->isfloating;
-			c->scratchkey = r->scratchkey;
+			c->isfloating  = r->isfloating;
+			c->hfact       = r->hfact;
+			c->wfact       = r->wfact;
 			c->titleurgent = r->titleurgent;
-			newtags |= r->tags;
+			c->scratchkey  = r->scratchkey;
+			newtags       |= r->tags;
 			i = 0;
 			wl_list_for_each(m, &mons, link) {
 				if (r->monitor == i++)
@@ -492,6 +506,15 @@ applyrules(Client *c)
 			}
 		}
 	}
+
+	if (c->isfloating) {
+		floatpos(c, mon);
+	}
+
+	if (c->scratchkey) {
+		newtags = mon->tagset[mon->seltags];
+	}
+
 	setmon(c, mon, newtags);
 }
 
@@ -519,7 +542,6 @@ arrange(Monitor *m)
 		m->lt[m->sellt]->arrange(m);
 	motionnotify(0, NULL, 0, 0, 0, 0);
 	checkidleinhibitor(NULL);
-	/*c = focustop(selmon);*/
 	warpcursor(c);
 }
 
@@ -765,12 +787,18 @@ closemon(Monitor *m)
 		if (c->isfloating && c->geom.x > m->m.width)
 			resize(c, (struct wlr_box){.x = c->geom.x - m->w.width, .y = c->geom.y,
 					.width = c->geom.width, .height = c->geom.height}, 0);
-		if (c->mon == m)
+		if (c->mon == m) {
 			setmon(c, selmon, c->tags);
+			if (c->scratchkey) {
+				floatpos(c, c->mon);
+				resize(c, c->geom, 0);
+			}
+		}
 	}
 	focusclient(focustop(selmon), 1);
 	printstatus();
 }
+
 
 void
 col(Monitor *m)
@@ -1337,6 +1365,19 @@ dirtomon(enum wlr_direction dir)
 }
 
 void
+floatpos(Client *c, Monitor *m)
+{
+	if (c->hfact > 0 && c->hfact <= 1) {
+		c->geom.height = ROUND(m->w.height * c->hfact);
+	}
+	if (c->wfact > 0 && c->wfact <= 1) {
+		c->geom.width = ROUND(m->w.width * c->wfact);
+	}
+	c->geom.x = ROUND((m->w.width * floatplacement.x) - (c->geom.width / 2) + m->m.x);
+	c->geom.y = ROUND((m->w.height * floatplacement.y) - (c->geom.height / 2) + m->m.y);
+}
+
+void
 focusclient(Client *c, int lift)
 {
 	struct wlr_surface *old = seat->keyboard_state.focused_surface;
@@ -1346,7 +1387,6 @@ focusclient(Client *c, int lift)
 
 	if (locked)
 		return;
-
 	/* Warp cursor to center of client if it is outside */
 	warpcursor(c);
 
@@ -1418,11 +1458,10 @@ void
 focusmon(const Arg *arg)
 {
 	int i = 0, nmons = wl_list_length(&mons);
-	if (nmons) {
+	if (nmons)
 		do /* don't switch to disabled mons */
 			selmon = dirtomon(arg->i);
 		while (!selmon->wlr_output->enabled && i++ < nmons);
-	}
 	focusclient(focustop(selmon), 1);
 }
 
@@ -1474,22 +1513,6 @@ fullscreennotify(struct wl_listener *listener, void *data)
 	setfullscreen(c, client_wants_fullscreen(c));
 }
 
-size_t
-getunusedtag(void)
-{
-	size_t i = 0;
-	Monitor *m;
-	if (wl_list_empty(&mons))
-		return i;
-	for (i=0; i < TAGCOUNT; i++) {
-		wl_list_for_each(m, &mons, link) {
-			if (!(m->tagset[m->seltags] & (1<<i)))
-				return i;
-		}
-	}
-	return i;
-}
-
 void
 gaplessgrid(Monitor *m)
 {
@@ -1512,7 +1535,7 @@ gaplessgrid(Monitor *m)
 	rows = n / cols;
 
 	/* window geometries */
-	cw = cols ? m->w.width / cols : m->w.width;
+	cw = cols ? m->w.width / cols : (unsigned int)m->w.width;
 	cn = 0; /* current column number */
 	rn = 0; /* current row number */
 	wl_list_for_each(c, &clients, link) {
@@ -1522,7 +1545,7 @@ gaplessgrid(Monitor *m)
 
 		if ((i / rows + 1) > (cols - n % cols))
 			rows = n / cols + 1;
-		ch = rows ? m->w.height / rows : m->w.height;
+		ch = rows ? m->w.height / rows : (unsigned int)m->w.height;
 		cx = m->w.x + cn * cw;
 		cy = m->w.y + rn * ch;
 		resize(c, (struct wlr_box) { cx, cy, cw, ch}, 0);
@@ -1533,6 +1556,22 @@ gaplessgrid(Monitor *m)
 		}
 		i++;
 	}
+}
+
+size_t
+getunusedtag(void)
+{
+	size_t i = 0;
+	Monitor *m;
+	if (wl_list_empty(&mons))
+		return i;
+	for (i=0; i < TAGCOUNT; i++) {
+		wl_list_for_each(m, &mons, link) {
+			if (!(m->tagset[m->seltags] & (1<<i)))
+				return i;
+		}
+	}
+	return i;
 }
 
 void
@@ -1586,6 +1625,10 @@ inputdevice(struct wl_listener *listener, void *data)
 	 * available. */
 	struct wlr_input_device *device = data;
 	uint32_t caps;
+
+	if (strcmp(device->name, "Elan Touchpad") == 0) {
+		return;
+	}
 
 	switch (device->type) {
 	case WLR_INPUT_DEVICE_KEYBOARD:
@@ -1935,6 +1978,7 @@ motionnotify(uint32_t time, struct wlr_input_device *device, double dx, double d
 		/* Update selmon (even while dragging a window) */
 		if (sloppyfocus)
 			selmon = xytomon(cursor->x, cursor->y);
+		printstatus();
 	}
 
 	/* Update drag icon's position */
@@ -1943,12 +1987,28 @@ motionnotify(uint32_t time, struct wlr_input_device *device, double dx, double d
 	/* If we are currently grabbing the mouse, handle and return */
 	if (cursor_mode == CurMove) {
 		/* Move the grabbed client to the new position. */
-		resize(grabc, (struct wlr_box){.x = ROUND(cursor->x) - grabcx, .y = ROUND(cursor->y) - grabcy,
-			.width = grabc->geom.width, .height = grabc->geom.height}, 1);
+		resize(
+			grabc,
+			(struct wlr_box){
+				.x = ROUND(cursor->x) - grabcx,
+				.y = ROUND(cursor->y) - grabcy,
+				.width = grabc->geom.width,
+				.height = grabc->geom.height
+			},
+			1
+		);
 		return;
 	} else if (cursor_mode == CurResize) {
-		resize(grabc, (struct wlr_box){.x = grabc->geom.x, .y = grabc->geom.y,
-			.width = ROUND(cursor->x) - grabc->geom.x, .height = ROUND(cursor->y) - grabc->geom.y}, 1);
+		resize(
+			grabc,
+			(struct wlr_box){
+				.x = grabc->geom.x,
+				.y = grabc->geom.y,
+				.width = ROUND(cursor->x) - grabc->geom.x,
+				.height = ROUND(cursor->y) - grabc->geom.y
+			},
+			1
+		);
 		return;
 	}
 
@@ -2438,6 +2498,8 @@ setfloating(Client *c, int floating)
 	wlr_scene_node_reparent(&c->scene->node, layers[c->isfullscreen ||
 			(p && p->isfullscreen) ? LyrFS
 			: c->isfloating ? LyrFloat : LyrTile]);
+	if (c->isfloating && !c->bw)
+		resize(c, c->mon->m, 0);
 	arrange(c->mon);
 	printstatus();
 }
@@ -2521,7 +2583,7 @@ setmon(Client *c, Monitor *m, uint32_t newtags)
 	if (m) {
 		/* Make sure window actually overlaps with the monitor */
 		resize(c, c->geom, 0);
-		c->tags = newtags ? newtags : m->tagset[m->seltags]; /* assign tags of target monitor */
+		c->tags = (newtags || c->scratchkey) ? newtags : m->tagset[m->seltags]; /* assign tags of target monitor */
 		setfullscreen(c, c->isfullscreen); /* This will call arrange(c->mon) */
 		setfloating(c, c->isfloating);
 	}
@@ -2778,7 +2840,8 @@ spawn(const Arg *arg)
 	}
 }
 
-void spawnscratch(const Arg *arg)
+void
+spawnscratch(const Arg *arg)
 {
 	if (fork() == 0) {
 		dup2(STDERR_FILENO, STDOUT_FILENO);
@@ -2845,9 +2908,9 @@ tile(Monitor *m)
 		return;
 
 	if (n == 1)
-		mw = m->w.width;
+		mw = ROUND(m->w.width);
 	else
-		mw = m->w.width * m->mfact;
+		mw = ROUND(m->w.width * m->mfact);
 	i = ty = 0;
 	wl_list_for_each(c, &clients, link) {
 		if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
@@ -2898,8 +2961,9 @@ togglefullscreen(const Arg *arg)
 void
 togglescratch(const Arg *arg)
 {
-	Client *c;
-	unsigned int found = 0;
+	Client *c, *w;
+	Monitor *m_client, *m_selected, *m;
+	unsigned int found = 0, new_monitor;
 
 	/* search for first window that matches the scratchkey */
 	wl_list_for_each(c, &clients, link)
@@ -2909,13 +2973,33 @@ togglescratch(const Arg *arg)
 		}
 
 	if (found) {
-		c->tags = VISIBLEON(c, selmon) ? 0 : selmon->tagset[selmon->seltags];
-
-		focusclient(c->tags == 0 ? focustop(selmon) : c, 1);
-		arrange(selmon);
-	} else{
+		if (VISIBLEON(c, c->mon)) {
+			m_client = c->mon;
+			m_selected = selmon;
+			c->tags = 0;
+			attachclients(m_client);
+			arrange(m_client);
+			focusclient(focustop(m_selected), 1);
+		}
+		else {
+			new_monitor = (c->mon != selmon);
+			c->tags = selmon->tagset[selmon->seltags];
+			attachclients(selmon);
+			if (c->isfloating && new_monitor) {
+				floatpos(c, selmon);
+				resize(c, c->geom, 0);
+			}
+			focusclient(c->tags == 0 ? focustop(selmon) : c, 1);
+			arrange(selmon);
+		}
+	} else {
 		spawnscratch(arg);
 	}
+
+	m = c->mon ? c->mon : xytomon(c->geom.x, c->geom.y);
+	wl_list_for_each(w, &clients, link)
+		if (w != c && w->isfullscreen && m == w->mon && (w->tags & c->tags))
+			setfullscreen(w, 0);
 }
 
 void
@@ -3087,9 +3171,15 @@ updatemons(struct wl_listener *listener, void *data)
 
 	if (selmon && selmon->wlr_output->enabled) {
 		wl_list_for_each(c, &clients, link) {
-			if (!c->mon && client_surface(c)->mapped)
+			if (!c->mon && client_surface(c)->mapped) {
 				setmon(c, selmon, c->tags);
+				if (c->scratchkey && c->isfloating) {
+					floatpos(c, selmon);
+					resize(c, c->geom, 0);
+				}
+			}
 		}
+
 		focusclient(focustop(selmon), 1);
 		if (selmon->lock_surface) {
 			client_notify_enter(selmon->lock_surface->surface,
@@ -3207,19 +3297,24 @@ warpcursor(const Client *c) {
 		return;
 	}
 	if (!c && selmon) {
-		wlr_cursor_warp_closest(cursor,
-			  NULL,
-			  selmon->w.x + selmon->w.width / 2.0 ,
-			  selmon->w.y + selmon->w.height / 2.0);
+		wlr_cursor_warp_closest(
+			cursor,
+			NULL,
+			selmon->w.x + selmon->w.width * warpplacement.x,
+			selmon->w.y + selmon->w.height * warpplacement.y
+		);
 	}
 	else if ( c && (cursor->x < c->geom.x ||
 		cursor->x > c->geom.x + c->geom.width ||
 		cursor->y < c->geom.y ||
 		cursor->y > c->geom.y + c->geom.height))
-		wlr_cursor_warp_closest(cursor,
-			  NULL,
-			  c->geom.x + c->geom.width / 2.0,
-			  c->geom.y + c->geom.height / 2.0);
+		wlr_cursor_warp_closest(
+			cursor,
+			NULL,
+			c->geom.x + c->geom.width * warpplacement.x,
+			c->geom.y + c->geom.height * warpplacement.y
+		);
+	handlecursoractivity(false);
 }
 
 Monitor *
@@ -3325,8 +3420,16 @@ configurex11(struct wl_listener *listener, void *data)
 		return;
 	}
 	if (c->isfloating || client_is_unmanaged(c))
-		resize(c, (struct wlr_box){.x = event->x, .y = event->y,
-				.width = event->width + c->bw * 2, .height = event->height + c->bw * 2}, 0);
+		resize(
+			c,
+			(struct wlr_box){
+				.x = event->x,
+				.y = event->y,
+				.width = event->width + c->bw * 2,
+				.height = event->height + c->bw * 2
+			},
+			0
+	      );
 	else
 		arrange(c->mon);
 }

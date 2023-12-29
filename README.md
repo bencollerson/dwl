@@ -1,3 +1,12 @@
+# forked version of dwl
+
+## Notable patches
+
+* chainkeys
+* viewnextocctag
+* singletagset
+* column layout
+
 # dwl - dwm for Wayland
 
 Join us on our IRC channel: [#dwl on Libera Chat]  

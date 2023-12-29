@@ -1,0 +1,61 @@
+dwl key bindings
+
+Super+d         open menu
+Super+Return    open terminal
+Super+j         focusstack right
+Super+k         focusstack left
+Super+h         movestack left
+Super+l         movestack right
+Super+Shift+H   shink left window
+Super+Shift+L   grow left window
+Super+space     zoom
+Super+Tab       toggle active tag
+Super+q         kill client
+Super+m         focus other monitor
+Super+n         move client to other monitor
+Super+o         keepassxc
+Super+Shift+Q   quit dwl
+
+Super+r <tag>   view tag
+Super+e <tag>   set tag
+
+Super+t c       column layout
+Super+t t       tile layout
+Super+t f       floating layout
+Super+t m       monocle layout
+Super+t x       full screen toggle
+Super+t o       toggle client floating
+
+Super+z         lock screen
+Super+Shift+Z   suspend auto screen lock
+Super+w         open browser
+Super+Shift+W   open nmtui
+Super+g         screenshot selection
+Super+Shift+G   screenshot entire screen
+Super+y         yank bookmark
+Super+u         paste bookmark
+Super+b         clipboard menu
+Super+a         close notifications
+
+Super+c         copy
+Super+v         paste
+Super+x         cut
+Super+BackSpace delete word
+
+Super+p         play/pause media
+MediaPlay       play/pause media
+Super+[         prev media
+MediaPrev       prev media
+Super+]         next media
+MediaNext       next media
+Alt+comma       volume down
+Super+comma     volume down
+VolumeDown      volume down
+Alt+.           volume up
+Super+.         volume up
+VolumeUp        volume up
+Alt+/           mute toggle
+Super+/         mute toggle
+MediaMute       mute toggle
+BrightnessUp    bright up
+BrightnessDown  bright down

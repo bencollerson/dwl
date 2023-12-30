@@ -67,7 +67,6 @@
 
 /* macros */
 #define MAX(A, B)               ((A) > (B) ? (A) : (B))
-#define MIN(A, B)               ((A) < (B) ? (A) : (B))
 #define ROUND(X)                ((int)((X < 0) ? (X - 0.5) : (X + 0.5)))
 #define CLEANMASK(mask)         (mask & ~WLR_MODIFIER_CAPS)
 #define VISIBLEON(C, M)         ((M) && ((C)->tags & (M)->tagset[(M)->seltags]))
@@ -205,14 +204,12 @@ struct Monitor {
 	uint32_t tagset[2];
 	float mfact;
 	int gamma_lut_changed;
-	int nmaster;
 	char ltsymbol[16];
 };
 
 typedef struct {
 	const char *name;
 	float mfact;
-	int nmaster;
 	float scale;
 	const Layout *lt;
 	enum wl_output_transform rr;
@@ -296,7 +293,6 @@ static size_t getunusedtag(void);
 static void handlecursoractivity(bool restore_focus);
 static void handlesig(int signo);
 static int hidecursor(void *data);
-static void incnmaster(const Arg *arg);
 static void inputdevice(struct wl_listener *listener, void *data);
 static int keybinding(uint32_t mods, xkb_keysym_t sym);
 static void keypress(struct wl_listener *listener, void *data);
@@ -990,7 +986,6 @@ createmon(struct wl_listener *listener, void *data)
 			m->m.x = r->x;
 			m->m.y = r->y;
 			m->mfact = r->mfact;
-			m->nmaster = r->nmaster;
 			m->lt[0] = r->lt;
 			m->lt[1] = &layouts[LENGTH(layouts) > 1 && r->lt != &layouts[1]];
 			strncpy(m->ltsymbol, m->lt[m->sellt]->symbol, LENGTH(m->ltsymbol));
@@ -1573,15 +1568,6 @@ hidecursor(void *data)
 	wlr_seat_pointer_notify_clear_focus(seat);
 	cursor_hidden = true;
 	return 1;
-}
-
-void
-incnmaster(const Arg *arg)
-{
-	if (!arg || !selmon)
-		return;
-	selmon->nmaster = MAX(selmon->nmaster + arg->i, 0);
-	arrange(selmon);
 }
 
 void
@@ -2821,7 +2807,7 @@ tagmon(const Arg *arg)
 void
 tile(Monitor *m)
 {
-	unsigned int mw, my, ty;
+	unsigned int mw, ty;
 	int i, n = 0;
 	Client *c;
 
@@ -2831,21 +2817,34 @@ tile(Monitor *m)
 	if (n == 0)
 		return;
 
-	if (n > m->nmaster)
-		mw = m->nmaster ? ROUND(m->w.width * m->mfact) : 0;
-	else
+	if (n == 1)
 		mw = m->w.width;
-	i = my = ty = 0;
+	else
+		mw = m->w.width * m->mfact;
+	i = ty = 0;
 	wl_list_for_each(c, &clients, link) {
 		if (!VISIBLEON(c, m) || c->isfloating || c->isfullscreen)
 			continue;
-		if (i < m->nmaster) {
-			resize(c, (struct wlr_box){.x = m->w.x, .y = m->w.y + my, .width = mw,
-				.height = (m->w.height - my) / (MIN(n, m->nmaster) - i)}, 0);
-			my += c->geom.height;
+		if (i == 0) {
+			resize(
+				c,
+				(struct wlr_box){
+					.x = m->w.x,
+					.y = m->w.y,
+					.width = mw,
+					.height = (m->w.height)
+					},
+				0);
 		} else {
-			resize(c, (struct wlr_box){.x = m->w.x + mw, .y = m->w.y + ty,
-				.width = m->w.width - mw, .height = (m->w.height - ty) / (n - i)}, 0);
+			resize(
+				c,
+				(struct wlr_box){
+					.x = m->w.x + mw,
+					.y = m->w.y + ty,
+					.width = m->w.width - mw,
+					.height = (m->w.height - ty) / (n - i)
+					},
+				0);
 			ty += c->geom.height;
 		}
 		i++;

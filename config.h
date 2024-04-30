@@ -1,6 +1,6 @@
 #include <X11/XF86keysym.h>
 #define TERMINAL "x-terminal-emulator"
-#define BROWSER "qutebrowser"
+#define BROWSER "brave"
 
 /* Taken from https://github.com/djpohly/dwl/issues/466 */
 #define COLOR(hex)    { ((hex >> 24) & 0xFF) / 255.0f, \

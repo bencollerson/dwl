@@ -201,6 +201,7 @@ static const Key keys[] = {
 	{ MODKEY,                    -1,   XKB_KEY_v,                spawn,            SPAWN("dwl-keys", "paste") },
 	{ MODKEY,                    -1,   XKB_KEY_x,                spawn,            SPAWN("dwl-keys", "cut") },
 	{ MODKEY,                    -1,   XKB_KEY_BackSpace,        spawn,            SPAWN("dwl-keys", "deleteword") },
+	{ MODKEY,                    -1,   XKB_KEY_s,                spawn,            SPAWN("dwl-keys", "edit") },
 
 	/* media */
 	{ MODKEY,                    -1,   XKB_KEY_p,                spawn,            SPAWN("media-command", "playpause") },

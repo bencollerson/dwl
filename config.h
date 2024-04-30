@@ -48,6 +48,8 @@ static const Rule rules[] = {
 		   NULL,  -1,      0,    0,          0,      0,      0,           0 },
 	{ "org.qutebrowser.qutebrowser",
 		   NULL,  -1,      0,    0,          0,      0,      1,           0 },
+	{ "brave-browser",
+		   NULL,  -1,      0,    0,          0,      0,      1,           0 },
 };
 
 /* layout(s) */
